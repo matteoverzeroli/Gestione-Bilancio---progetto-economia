@@ -3,8 +3,10 @@ import java.io.FileNotFoundException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 
 public class Main {
 
@@ -23,7 +25,7 @@ public class Main {
 	      // Creating a Document        
 	      Document document = new Document(pdfDoc);               
 	      
-	      //Creating paragrapghs
+	      //Creating paragraphs
 	      String para1 = "ciao amine";
 	      String para2 ="come stai ? ";
 	      String para3 = "BILANCIO";
@@ -47,8 +49,12 @@ public class Main {
 	      list.add("Malighetti");
 	      
 	      document.add(list);
-	         		  
-	  
+	      
+	      //Create table
+	      
+	      float[] pointColumnWidths = {150F,150F,150F};
+	      Table table = new Table(pointColumnWidths);	      
+	      
 	      
 	      // Closing the document    
 	      document.close();              
