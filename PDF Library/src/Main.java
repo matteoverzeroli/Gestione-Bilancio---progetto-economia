@@ -1,12 +1,18 @@
 import java.io.FileNotFoundException;
 
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 
 public class Main {
 
@@ -54,11 +60,34 @@ public class Main {
 	      
 	      float[] pointColumnWidths = {150F,150F,150F};
 	      Table table = new Table(pointColumnWidths);	      
-	      
-	      
-	      // Closing the document    
+	      Cell cell = new Cell(1, 3).add(new Paragraph("This is a header"));
+	               
+	        table.addHeaderCell(cell);
+	        for (int i = 0; i < 2; i++) {
+	            Cell[] headerFooter = new Cell[]{
+	                    new Cell().setBackgroundColor(new DeviceGray(0.75f)).add(new Paragraph("#")),
+	                    new Cell().setBackgroundColor(new DeviceGray(0.75f)).add(new Paragraph("Key")),
+	                    new Cell().setBackgroundColor(new DeviceGray(0.75f)).add(new Paragraph("Value"))
+	            };
+	            for (Cell hfCell : headerFooter) {
+	                if (i == 0) {
+	                    table.addHeaderCell(hfCell);
+	                } else {
+	                    table.addFooterCell(hfCell);
+	                }
+	            }
+	        }
+	        for (int counter = 1; counter < 101; counter++) {
+	            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(new Paragraph(String.valueOf(counter))));
+	            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(new Paragraph("key " + counter)));
+	            table.addCell(new Cell().setTextAlignment(TextAlignment.CENTER).add(new Paragraph("value " + counter)));
+	        }
+	        document.add(table);
+	        document.close();
+	        
+	      // Closing the document   
 	      document.close();              
 	      System.out.println("PDF Created");    
-	   } 
-	
+	   }
+
 }
