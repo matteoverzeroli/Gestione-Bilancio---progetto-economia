@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -67,18 +68,44 @@ public class AggiungiAzienda extends JFrame {
 		contentPane.add(btnCancella);
 
 		JButton btnOk = new JButton("OK");
-		/**
-		 * @author Davide Inserisce nel database i dati dell'azienda. Bisogna aggiungere
-		 *         i controlli sui dati (sono stati inseriti tutti? sono della lunghezza
-		 *         giusta? sono sensati?)
-		 */
+	
 		btnOk.addActionListener(e -> {
-			aggiungiAziendaAlDB();
+			if (controlloDatiInseriti()) {
+				aggiungiAziendaAlDB(); //aggiungo azienza inserita al db dopo aver controllato validità dei dati
+			}
 		});
 
 		btnOk.setBounds(339, 231, 89, 23);
 		contentPane.add(btnOk);
 		setVisible(true);
+	}
+
+	/**
+	 * @author Matteo Metodo per controllare se dati inseriti dall'utente sono validi
+	 * 
+	 * @return true se dati inseriti sono giusti - false se i dati inseriti non sono giusti
+	 *
+	 */
+
+	private boolean controlloDatiInseriti() {
+		String nomeinserito;
+		try {
+			nomeinserito = textNome.getText();
+		} catch (NullPointerException exception) {
+			finestraErrore("Dati inseriti in \"Nome\" non validi!");
+			return false;
+		}
+		if (nomeinserito.isEmpty()) {
+			finestraErrore("Dati inseriti in \"Nome\" non validi!\n" + "Scrivere un nome");
+			return false;
+		}
+		return true;
+
+	}
+
+	private void finestraErrore(String errore) {
+		JFrame frame = new JFrame("Show Message Box");
+		JOptionPane.showMessageDialog(frame,errore,"ERRORE",JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**

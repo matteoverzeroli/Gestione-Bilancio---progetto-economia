@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libraries/jgoodies-common-1.8.1.jar"/>
 	<classpathentry kind="lib" path="libraries/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="lib" path="libraries/sqlite-jdbc-3.27.2.1.jar"/>
+	<classpathentry kind="lib" path="libraries/miglayout15-swing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

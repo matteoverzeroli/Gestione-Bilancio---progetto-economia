@@ -27,14 +27,9 @@ public class Globs {
 	 * https://www.sqlitetutorial.net/sqlite-java/
 	 */
 
-	/**
-	 * Funzione per connettersi al database
-	 *
-	 * @return the Connection object
-	 */
 	// CAMPI
 	private static ProgettoEconomiaBilancio homeWindow; // campo che contiene riferimento alla finestra
-														// ProgettoBilancioEconomia
+	private static String databasename; // contiene il nome del file del database // ProgettoBilancioEconomia
 
 	/**
 	 * @author Matteo
@@ -59,9 +54,14 @@ public class Globs {
 		return homeWindow;
 	}
 
+	/**
+	 * Funzione per connettersi al database
+	 *
+	 * @return the Connection object
+	 */
 	public static Connection connect() {
 		// SQLite connection string
-		String url = "jdbc:sqlite:test.db";
+		String url = "jdbc:sqlite:database/" + databasename;
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(url);
@@ -76,7 +76,8 @@ public class Globs {
 	 *
 	 * @param fileName the database file name
 	 */
-	public static void createNewDatabase(String fileName) {
+	public static void createNewDatabase(String databasename) {
+		Globs.databasename = databasename;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -84,7 +85,7 @@ public class Globs {
 			// TODO: handle exception
 		}
 
-		String url = "jdbc:sqlite:test.db";
+		String url = "jdbc:sqlite:database/" + Globs.databasename;
 
 		String sql1 = "CREATE TABLE IF NOT EXISTS Aziende ( " + "    id		 	INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ "    Nome 	 	CHAR (30) NOT NULL, " + "    Descrizione  CHAR (200) " + ");";
