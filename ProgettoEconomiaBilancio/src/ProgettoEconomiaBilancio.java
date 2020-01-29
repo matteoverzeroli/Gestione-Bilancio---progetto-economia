@@ -3,7 +3,6 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.Color;
 import javax.swing.JToolBar;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -15,6 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
@@ -23,14 +23,13 @@ import javax.swing.JTable;
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.Sizes;
 import net.miginfocom.swing.MigLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import vocibilancio.VociBilancioAttivo;
+
 import javax.swing.BoxLayout;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JSpinner;
 import javax.swing.JTextPane;
-import javax.swing.JTextField;
 import java.awt.Dimension;
 import javax.swing.SpinnerNumberModel;
 
@@ -202,13 +201,22 @@ public class ProgettoEconomiaBilancio {
 		Box verticalBox = Box.createVerticalBox();
 		panel_3.add(verticalBox);
 
-		JRadioButton rdbtnEntrate = new JRadioButton("Entrate");
-		verticalBox.add(rdbtnEntrate);
+		JRadioButton rdbtnDare = new JRadioButton("Dare");
+		verticalBox.add(rdbtnDare);
 
-		JRadioButton rdbtnUscite = new JRadioButton("Uscite");
-		rdbtnUscite.setMinimumSize(new Dimension(61, 23));
-		rdbtnUscite.setMaximumSize(new Dimension(61, 23));
-		verticalBox.add(rdbtnUscite);
+		JRadioButton rdbtnAvere = new JRadioButton("Avere");
+		rdbtnAvere.setMinimumSize(new Dimension(61, 23));
+		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
+		verticalBox.add(rdbtnAvere);
+
+		/*
+		 * Creazione gruppo di radiobuttons affinchè sia possibile selezionare un solo
+		 * radiobutton per gruppo alla volta
+		 * 
+		 */
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnDare);
+		group.add(rdbtnAvere);
 
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		panel_3.add(horizontalStrut_1);
@@ -220,7 +228,7 @@ public class ProgettoEconomiaBilancio {
 		horizontalBox.add(lblValore);
 
 		JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		spinner.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
 		spinner.setMinimumSize(new Dimension(120, 20));
 		spinner.setMaximumSize(new Dimension(120, 20));
 		horizontalBox.add(spinner);
@@ -231,13 +239,19 @@ public class ProgettoEconomiaBilancio {
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		panel_3.add(horizontalBox_1);
 
-		JLabel lblCodice = new JLabel("Codice:");
+		JLabel lblCodice = new JLabel("Voce bilancio:");
 		horizontalBox_1.add(lblCodice);
 
-		JComboBox comboBox = new JComboBox();
-		comboBox.setMinimumSize(new Dimension(150, 22));
-		comboBox.setMaximumSize(new Dimension(150, 22));
-		horizontalBox_1.add(comboBox);
+		JComboBox comboBoxVociBilancio = new JComboBox();
+		comboBoxVociBilancio.setMinimumSize(new Dimension(150, 22));
+		comboBoxVociBilancio.setMaximumSize(new Dimension(150, 22));
+		horizontalBox_1.add(comboBoxVociBilancio);
+		/*
+		 * Aggiunta alla combo delle voci del bilancio
+		 */
+		for (VociBilancioAttivo voce : VociBilancioAttivo.values()) {
+			comboBoxVociBilancio.addItem(voce.toString());
+		}
 
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4, "cell 0 1,grow");

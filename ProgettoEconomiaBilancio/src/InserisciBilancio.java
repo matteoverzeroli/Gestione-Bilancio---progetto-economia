@@ -5,8 +5,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JButton;
-import net.miginfocom.swing.MigLayout;
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -16,7 +14,8 @@ import java.sql.SQLException;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-
+import java.util.Date;
+import java.util.Calendar;
 
 public class InserisciBilancio extends JFrame {
 
@@ -63,7 +62,7 @@ public class InserisciBilancio extends JFrame {
 		contentPane.setLayout(null);
 
 		JButton btnChiudi = new JButton("Chiudi");
-		btnChiudi.setBounds(10, 231, 63, 23);
+		btnChiudi.setBounds(10, 231, 91, 23);
 		contentPane.add(btnChiudi);
 
 		JButton btnOK = new JButton("OK");
@@ -82,10 +81,33 @@ public class InserisciBilancio extends JFrame {
 		contentPane.add(lblAnno);
 
 		spinnerAnno = new JSpinner();
-		spinnerAnno.setModel(new SpinnerNumberModel(2019, 2000, 2019, 1));
+
+		spinnerAnno.setModel(new SpinnerNumberModel(getCurrentYear(), null, getCurrentYear(), new Integer(1)));
 		spinnerAnno.setBounds(68, 8, 133, 20);
+
+		/*
+		 * le seguenti righe di codice tolgono il punto delle migliaia
+		 */
+
+		JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinnerAnno, "#");
+		spinnerAnno.setEditor(editor);
+
 		contentPane.add(spinnerAnno);
 		setVisible(true);
+	}
+
+	/**
+	 * Restitusce l'anno corrente
+	 * 
+	 * @author Matteo
+	 * @return anno corrente
+	 */
+	private int getCurrentYear() {
+		Date today = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+
+		return cal.get(Calendar.YEAR);
 	}
 
 	/**
