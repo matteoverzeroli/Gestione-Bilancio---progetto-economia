@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import java.awt.Color;
 import javax.swing.JToolBar;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.Component;
@@ -11,6 +12,7 @@ import javax.swing.Box;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import com.jgoodies.forms.layout.Sizes;
 import net.miginfocom.swing.MigLayout;
 import vocibilancio.VociBilancioAttivo;
+import vocibilancio.VociBilancioPassivo;
 
 import javax.swing.BoxLayout;
 import javax.swing.JRadioButton;
@@ -32,6 +35,8 @@ import javax.swing.JSpinner;
 import javax.swing.JTextPane;
 import java.awt.Dimension;
 import javax.swing.SpinnerNumberModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ProgettoEconomiaBilancio {
 
@@ -74,7 +79,7 @@ public class ProgettoEconomiaBilancio {
 		try (Connection conn = Globs.connect();
 				Statement stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(sql)) {
-
+			comboAzienda.addItem("*Azienda non selezionata!*");
 			// loop through the result set
 			while (rs.next()) {
 				comboAzienda.addItem(rs.getString("Nome"));
@@ -150,6 +155,18 @@ public class ProgettoEconomiaBilancio {
 		});
 		toolBar.add(btnAggiungiAzienda);
 
+		JButton btnCancellaAzienda = new JButton("Cancella Azienda");
+
+		btnCancellaAzienda.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				cancellaAziendaDalDB();
+			}
+		});
+
+		btnCancellaAzienda.setForeground(Color.RED);
+		toolBar.add(btnCancellaAzienda);
+
 		Component horizontalGlue = Box.createHorizontalGlue();
 		toolBar.add(horizontalGlue);
 
@@ -198,6 +215,12 @@ public class ProgettoEconomiaBilancio {
 		panel_2.add(panel_3, "cell 0 0,grow");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
+		JRadioButton rdbtnPassivo = new JRadioButton("Passivo");
+		panel_3.add(rdbtnPassivo);
+
+		JRadioButton rdbtnAttivo = new JRadioButton("Attivo");
+		panel_3.add(rdbtnAttivo);
+
 		Box verticalBox = Box.createVerticalBox();
 		panel_3.add(verticalBox);
 
@@ -214,9 +237,13 @@ public class ProgettoEconomiaBilancio {
 		 * radiobutton per gruppo alla volta
 		 * 
 		 */
-		ButtonGroup group = new ButtonGroup();
-		group.add(rdbtnDare);
-		group.add(rdbtnAvere);
+		ButtonGroup gruppoAttivoPassivo = new ButtonGroup();
+		gruppoAttivoPassivo.add(rdbtnAttivo);
+		gruppoAttivoPassivo.add(rdbtnPassivo);
+
+		ButtonGroup gruppoDareAvere = new ButtonGroup();
+		gruppoDareAvere.add(rdbtnDare);
+		gruppoDareAvere.add(rdbtnAvere);
 
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		panel_3.add(horizontalStrut_1);
@@ -246,12 +273,6 @@ public class ProgettoEconomiaBilancio {
 		comboBoxVociBilancio.setMinimumSize(new Dimension(150, 22));
 		comboBoxVociBilancio.setMaximumSize(new Dimension(150, 22));
 		horizontalBox_1.add(comboBoxVociBilancio);
-		/*
-		 * Aggiunta alla combo delle voci del bilancio
-		 */
-		for (VociBilancioAttivo voce : VociBilancioAttivo.values()) {
-			comboBoxVociBilancio.addItem(voce.toString());
-		}
 
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4, "cell 0 1,grow");
@@ -280,6 +301,50 @@ public class ProgettoEconomiaBilancio {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
+		/**
+		 * Metodi attivati al click su radio button
+		 * 
+		 * @author Matteo
+		 */
+
+		rdbtnAttivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxVociBilancio.removeAllItems();
+				aggiornaComboVociBilancio(comboBoxVociBilancio, true);
+			}
+		});
+
+		rdbtnPassivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxVociBilancio.removeAllItems();
+				aggiornaComboVociBilancio(comboBoxVociBilancio, false);
+			}
+		});
+
+	}
+
+	/**
+	 * Metodo per aggiornare la combo che cotiene le voci del bilancio in base alla
+	 * selezione dei radio button corripondenti
+	 * 
+	 * @author Matteo
+	 * @param type true ->attivo, false ->passivo
+	 */
+
+	private void aggiornaComboVociBilancio(JComboBox comboBoxVociBilancio, boolean type) {
+		/*
+		 * Aggiunta alla combo delle voci del bilancio
+		 */
+		if (type) {
+			for (VociBilancioAttivo voce : VociBilancioAttivo.values()) {
+				comboBoxVociBilancio.addItem(voce.toString());
+			}
+		} else {
+			for (VociBilancioPassivo voce : VociBilancioPassivo.values()) {
+				comboBoxVociBilancio.addItem(voce.toString());
+			}
+		}
+
 	}
 
 	/**
@@ -306,6 +371,60 @@ public class ProgettoEconomiaBilancio {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * Metodo per cancellare una azienda dal db
+	 * 
+	 * @author Matteo
+	 */
+	private void cancellaAziendaDalDB() {
+		Object[] possibilities = { "Azienda non selezionata!" };
+
+		String sql = "SELECT id, Nome, Descrizione FROM Aziende";
+		try (Connection conn = Globs.connect();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(sql)) {
+
+			// loop through the result set
+			int i = 0;
+			while (rs.next()) {
+				/*
+				 * autore matteo : poco elegante solo provvisorio
+				 */
+				Object[] temp = new Object[i + 1];
+				temp = possibilities;
+				possibilities = new Object[i + 2];
+				for (int k = 0; k < i + 1; k++) {
+					possibilities[k] = temp[k];
+				}
+				possibilities[i + 1] = rs.getString("Nome");
+				i++;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+		String aziendaselezionata = (String) JOptionPane.showInputDialog(frame,
+				"Seleziona il nome dell'azienda che vuoi cancellare", "Cancellazione Azienda",
+				JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
+		while (aziendaselezionata != null && aziendaselezionata.compareTo("Azienda non selezionata!") == 0) {
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Selezionare una azienda!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			aziendaselezionata = (String) JOptionPane.showInputDialog(frame,
+					"Seleziona il nome dell'azienda che vuoi cancellare", "Cancellazione Azienda",
+					JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
+		}
+		
+		String qry = "DELETE FROM Aziende WHERE Nome = '" + aziendaselezionata + "'";
+		try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
+			pstmt.executeUpdate();
+		} catch (SQLException p) {
+			System.out.println(p.getMessage());
+		}
+		
+		aggiornaComboAzienda();
+
 	}
 
 	/**

@@ -12,14 +12,18 @@ import javax.swing.JButton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AggiungiAzienda extends JFrame {
 	// CAMPI
+
 	private ProgettoEconomiaBilancio homeWindow; // campo che contiene il riferimento alla finestra pannello bilancio
 
 	private JPanel contentPane;
 	private JTextField textNome;
 	private ProgettoEconomiaBilancio progetto;
+	private JTextField textDescrizione;
 
 	/**
 	 * Launch the application.
@@ -45,7 +49,7 @@ public class AggiungiAzienda extends JFrame {
 		homeWindow = Globs.getHomeWindow(); // setta homeWindows con il riferimento alla finestra
 											// ProgettoEconomiaBilancio
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
@@ -63,32 +67,40 @@ public class AggiungiAzienda extends JFrame {
 		contentPane.add(textNome);
 		textNome.setColumns(10);
 
-		JButton btnCancella = new JButton("Cancella");
-		btnCancella.setBounds(10, 231, 89, 23);
-		contentPane.add(btnCancella);
-
 		JButton btnOk = new JButton("OK");
-	
+
 		btnOk.addActionListener(e -> {
 			if (controlloDatiInseriti()) {
-				aggiungiAziendaAlDB(); //aggiungo azienza inserita al db dopo aver controllato validità dei dati
+				aggiungiAziendaAlDB(); // aggiungo azienza inserita al db dopo aver controllato validità dei dati
 			}
 		});
 
 		btnOk.setBounds(339, 231, 89, 23);
 		contentPane.add(btnOk);
+
+		textDescrizione = new JTextField();
+		textDescrizione.setText("Descrizione ");
+		textDescrizione.setBounds(50, 63, 86, 20);
+		contentPane.add(textDescrizione);
+		textDescrizione.setColumns(10);
 		setVisible(true);
 	}
 
 	/**
-	 * @author Matteo Metodo per controllare se dati inseriti dall'utente sono validi
+	 * @author Matteo Metodo per controllare se dati inseriti dall'utente sono
+	 *         validi
 	 * 
-	 * @return true se dati inseriti sono giusti - false se i dati inseriti non sono giusti
+	 * @return true se dati inseriti sono giusti - false se i dati inseriti non sono
+	 *         giusti
 	 *
 	 */
 
 	private boolean controlloDatiInseriti() {
 		String nomeinserito;
+		String descrizioneinserita;
+		/*
+		 * Controlli sul nome inserito
+		 */
 		try {
 			nomeinserito = textNome.getText();
 		} catch (NullPointerException exception) {
@@ -99,13 +111,41 @@ public class AggiungiAzienda extends JFrame {
 			finestraErrore("Dati inseriti in \"Nome\" non validi!\n" + "Scrivere un nome");
 			return false;
 		}
+
+		if (nomeinserito.length() > Globs.lunghezzaMaxNomeAzienda) {
+			finestraErrore("Dati inseriti in \"Nome\" non validi!\n" + "Troppi caratteri! Max "
+					+ String.valueOf(Globs.lunghezzaMaxNomeAzienda));
+			return false;
+		}
+
+		/*
+		 * Controlli sulla descrizione inserita
+		 */
+		try {
+			descrizioneinserita = textDescrizione.getText();
+		} catch (NullPointerException exception) {
+			finestraErrore("Dati inseriti in \"Descrizione\" non validi!");
+			return false;
+		}
+
+		if (descrizioneinserita.isEmpty()) {
+			finestraErrore("Dati inseriti in \"Descrizione\" non validi!\n" + "Scrivere una descrizione");
+			return false;
+		}
+
+		if (descrizioneinserita.length() > Globs.lunghezzaMaxDescrizioneAzienda) {
+			finestraErrore("Dati inseriti in \"Descrizione\" non validi!\n" + "Troppi caratteri! Max "
+					+ String.valueOf(Globs.lunghezzaMaxNomeAzienda));
+			return false;
+		}
+
 		return true;
 
 	}
 
 	private void finestraErrore(String errore) {
 		JFrame frame = new JFrame("Show Message Box");
-		JOptionPane.showMessageDialog(frame,errore,"ERRORE",JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, errore, "ERRORE", JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**

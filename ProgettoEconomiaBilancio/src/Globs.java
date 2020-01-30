@@ -30,6 +30,10 @@ public class Globs {
 	// CAMPI
 	private static ProgettoEconomiaBilancio homeWindow; // campo che contiene riferimento alla finestra
 	private static String databasename; // contiene il nome del file del database // ProgettoBilancioEconomia
+	
+	protected static final int lunghezzaMaxNomeAzienda = 30;
+	protected static final int lunghezzaMaxDescrizioneAzienda = 200;
+
 
 	/**
 	 * @author Matteo
@@ -88,7 +92,7 @@ public class Globs {
 		String url = "jdbc:sqlite:database/" + Globs.databasename;
 
 		String sql1 = "CREATE TABLE IF NOT EXISTS Aziende ( " + "    id		 	INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ "    Nome 	 	CHAR (30) NOT NULL, " + "    Descrizione  CHAR (200) " + ");";
+				+ "    Nome 	 	CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda)+") NOT NULL, " + "    Descrizione  CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda) +") " + ");";
 		/*
 		 * a ogni azienda può essere associato più di un bilancio: id - è l'intero con
 		 * cui un bilancio è associato all'azienda Reference - è un identificativo
@@ -97,7 +101,11 @@ public class Globs {
 		String sql3 = "CREATE TABLE IF NOT EXISTS Bilanci ( " + "	   id           INTEGER REFERENCES Aziende (id), "
 				+ "    Reference    INTEGER PRIMARY KEY AUTOINCREMENT, " + "    Anno         INTEGER, "
 				+ "    Note         CHAR (300) " + ");";
-
+		
+		/*
+		 * ATTENZIONE ALLA GESTIONE ENTRATE/USCITE -> ATTIVO / PASSIVO
+		 */
+		
 		/*
 		 * la variabile del database InOut indica se è un entrata o un uscita quindi + o
 		 * - nel conto id - è connesso a un bilancio tramite la variabile Reference

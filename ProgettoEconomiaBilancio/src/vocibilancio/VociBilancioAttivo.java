@@ -1,5 +1,10 @@
 package vocibilancio;
-
+/**
+ * Classe enum per la definizione delle voci di bilancio
+ * 
+ * @author Matteo
+ *
+ */
 public enum VociBilancioAttivo {
 	/*
 	 * Vengono aggiunti tre spazi per identazione dei sottogruppi

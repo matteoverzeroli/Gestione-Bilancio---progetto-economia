@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import java.util.Date;
@@ -53,7 +54,7 @@ public class InserisciBilancio extends JFrame {
 		homeWindow = Globs.getHomeWindow();
 
 		setBackground(Color.BLACK);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
@@ -62,6 +63,12 @@ public class InserisciBilancio extends JFrame {
 		contentPane.setLayout(null);
 
 		JButton btnChiudi = new JButton("Chiudi");
+		btnChiudi.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				buttonChiudiClicked();
+			}
+		});
 		btnChiudi.setBounds(10, 231, 91, 23);
 		contentPane.add(btnChiudi);
 
@@ -125,5 +132,23 @@ public class InserisciBilancio extends JFrame {
 
 		homeWindow.aggiornaComboBilancio(anno, idAzienda);
 		this.dispose();
+	}
+	
+	/**
+	 * @author Matteo
+	 * Metodo che chiede se l'utente è sicuro di uscire
+	 */
+
+	private void buttonChiudiClicked() {
+		JFrame frame = new JFrame("Show Message Box");
+		Object[] options = { "Si", "No"};
+		int n = JOptionPane.showOptionDialog(frame, "Sei sicuro di voler chiudere?",
+				"Attenzione", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+				options[1]);
+		if(n == 0) {
+			this.dispose(); //chiudi la finestra 
+		} else {
+			//non fare nulla
+		}
 	}
 }
