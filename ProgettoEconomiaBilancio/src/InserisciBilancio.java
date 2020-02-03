@@ -117,38 +117,37 @@ public class InserisciBilancio extends JFrame {
 		return cal.get(Calendar.YEAR);
 	}
 
-	/**
-	 * ATTENZIONE: Bisogna inserire il controllo per cui uno non puo scegliere un
-	 * anno di bilancio che ha gia inserito
-	 */
 	private void buttonOkClicked() {
 		int anno = (int) spinnerAnno.getValue();
-		String qry = "INSERT INTO Bilanci (id, Anno) VALUES (" + idAzienda + ", " + anno + ")";
-		try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
-			pstmt.executeUpdate();
-		} catch (SQLException p) {
-			System.out.println(p.getMessage());
-		}
+		if (homeWindow.getAnnoBilanci(anno)) {
+			String qry = "INSERT INTO Bilanci (id, Anno) VALUES (" + idAzienda + ", " + anno + ")";
+			try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
+				pstmt.executeUpdate();
+			} catch (SQLException p) {
+				System.out.println(p.getMessage());
+			}
 
-		homeWindow.aggiornaComboBilancio(anno, idAzienda);
-		this.dispose();
+			homeWindow.aggiornaComboBilancio(idAzienda);
+			this.dispose();
+		} else {
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Anno Bilancio già inserito", "ERRORE", JOptionPane.ERROR_MESSAGE);
+		}
 	}
-	
+
 	/**
-	 * @author Matteo
-	 * Metodo che chiede se l'utente è sicuro di uscire
+	 * @author Matteo Metodo che chiede se l'utente è sicuro di uscire
 	 */
 
 	private void buttonChiudiClicked() {
 		JFrame frame = new JFrame("Show Message Box");
-		Object[] options = { "Si", "No"};
-		int n = JOptionPane.showOptionDialog(frame, "Sei sicuro di voler chiudere?",
-				"Attenzione", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-				options[1]);
-		if(n == 0) {
-			this.dispose(); //chiudi la finestra 
+		Object[] options = { "Si", "No" };
+		int n = JOptionPane.showOptionDialog(frame, "Sei sicuro di voler chiudere?", "Attenzione",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+		if (n == 0) {
+			this.dispose(); // chiudi la finestra
 		} else {
-			//non fare nulla
+			// non fare nulla
 		}
 	}
 }

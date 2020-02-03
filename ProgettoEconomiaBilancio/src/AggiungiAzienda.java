@@ -22,7 +22,6 @@ public class AggiungiAzienda extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textNome;
-	private ProgettoEconomiaBilancio progetto;
 	private JTextField textDescrizione;
 
 	/**

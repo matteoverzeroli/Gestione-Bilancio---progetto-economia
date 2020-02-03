@@ -15,7 +15,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.Vector;
 
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -35,16 +37,26 @@ import javax.swing.JSpinner;
 import javax.swing.JTextPane;
 import java.awt.Dimension;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 
 public class ProgettoEconomiaBilancio {
 
 	private JFrame frame;
-	private JComboBox comboAzienda;
-	private JComboBox comboBoxBilancio;
+	private JComboBox<String> comboAzienda;
+	private JComboBox<String> comboBoxBilancio;
 	private JTable table;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextPane textNote;
+	private JComboBox<String> comboBoxVociBilancio;
+	private JSpinner spinnerValore;
+	private JRadioButton rdbtnAttivo;
+	private JRadioButton rdbtnPassivo;
+	private JRadioButton rdbtnDare;
+	private JRadioButton rdbtnAvere;
 
 	/**
 	 * Launch the application.
@@ -83,7 +95,9 @@ public class ProgettoEconomiaBilancio {
 			// loop through the result set
 			while (rs.next()) {
 				comboAzienda.addItem(rs.getString("Nome"));
+				comboAzienda.setSelectedItem(rs.getString("Nome"));
 			}
+			comboAzienda.setSelectedIndex(0);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -93,10 +107,9 @@ public class ProgettoEconomiaBilancio {
 	 * Aggiorna la combo bilancio con tutti i bilanci dell'azienda in questione e
 	 * setta come attivo l'ultimo bilancio creato
 	 * 
-	 * @param anno
 	 * @param idAzienda
 	 */
-	public void aggiornaComboBilancio(int anno, int idAzienda) {
+	public void aggiornaComboBilancio(int idAzienda) {
 		comboBoxBilancio.removeAllItems();
 		String sql = "SELECT Anno FROM Bilanci WHERE id = " + idAzienda + " ";
 		try (Connection conn = Globs.connect();
@@ -119,7 +132,7 @@ public class ProgettoEconomiaBilancio {
 		Globs.setHomeWindow(this); // setta nella classe Globs il riferimento a questa finestra
 
 		frame = new JFrame();
-		frame.setMinimumSize(new Dimension(700, 500));
+		frame.setMinimumSize(new Dimension(1000, 500));
 		frame.getContentPane().setBackground(Color.BLACK);
 		frame.getContentPane()
 				.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("438px:grow"), },
@@ -136,10 +149,38 @@ public class ProgettoEconomiaBilancio {
 		JLabel lblAzienda = new JLabel("Azienda:");
 		toolBar.add(lblAzienda);
 
-		comboAzienda = new JComboBox();
+		comboAzienda = new JComboBox<String>();
+
+		/*
+		 * metodo per aggiornare tabella bilanci al cambiare dell'azienda selezionata
+		 * TODO aggiornamento dei mastrini relativi all'azienda
+		 */
+		comboAzienda.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (comboAzienda.getItemCount() != 0 && comboAzienda.getSelectedItem().toString() != null) {
+					if (comboAzienda.getSelectedItem().toString() == "*Azienda non selezionata!*") {
+						String azienda = comboAzienda.getSelectedItem().toString();
+						comboBoxBilancio.removeAllItems();
+					} else {
+						String azienda = comboAzienda.getSelectedItem().toString();
+						String sql = "SELECT id FROM Aziende WHERE Nome = '" + azienda + "' ";
+						try (Connection conn = Globs.connect();
+								Statement stmt = conn.createStatement();
+								ResultSet rs = stmt.executeQuery(sql)) {
+							if (rs.next()) {
+								aggiornaComboBilancio(rs.getInt("id"));
+							}
+						} catch (SQLException e) {
+							System.out.println(e.getMessage());
+						}
+					}
+
+					// aggiornaTabella();
+				}
+			}
+
+		});
 		toolBar.add(comboAzienda);
-		/* Inserisce nella comboAzienda le aziende che sono state inserite */
-		aggiornaComboAzienda();
 
 		JButton btnAggiungiAzienda = new JButton("Aggiungi Azienda");
 		btnAggiungiAzienda.addMouseListener(new MouseAdapter() {
@@ -177,13 +218,13 @@ public class ProgettoEconomiaBilancio {
 		JLabel lblBilancio = new JLabel("Bilancio:");
 		panel.add(lblBilancio, "cell 0 0,alignx trailing");
 
-		comboBoxBilancio = new JComboBox();
+		comboBoxBilancio = new JComboBox<String>();
 		panel.add(comboBoxBilancio, "flowx,cell 1 0,growx");
 
 		JButton btnCreaBilancio = new JButton("Inserisci Bilancio");
 		btnCreaBilancio.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(MouseEvent arg0) {
 				apriPannelloBilancio();
 			}
 		});
@@ -203,6 +244,7 @@ public class ProgettoEconomiaBilancio {
 		panel_1.setLayout(new MigLayout("", "[210px][grow]", "[65px,grow]"));
 
 		table = new JTable();
+		table.setMinimumSize(new Dimension(400, 0));
 		table.setMaximumSize(new Dimension(1000000, 1000000));
 		table.setSize(new Dimension(0, 500));
 		panel_1.add(table, "cell 0 0,grow");
@@ -215,19 +257,19 @@ public class ProgettoEconomiaBilancio {
 		panel_2.add(panel_3, "cell 0 0,grow");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
-		JRadioButton rdbtnPassivo = new JRadioButton("Passivo");
+		rdbtnPassivo = new JRadioButton("Passivo");
 		panel_3.add(rdbtnPassivo);
 
-		JRadioButton rdbtnAttivo = new JRadioButton("Attivo");
+		rdbtnAttivo = new JRadioButton("Attivo");
 		panel_3.add(rdbtnAttivo);
 
 		Box verticalBox = Box.createVerticalBox();
 		panel_3.add(verticalBox);
 
-		JRadioButton rdbtnDare = new JRadioButton("Dare");
+		rdbtnDare = new JRadioButton("Dare");
 		verticalBox.add(rdbtnDare);
 
-		JRadioButton rdbtnAvere = new JRadioButton("Avere");
+		rdbtnAvere = new JRadioButton("Avere");
 		rdbtnAvere.setMinimumSize(new Dimension(61, 23));
 		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
 		verticalBox.add(rdbtnAvere);
@@ -254,11 +296,11 @@ public class ProgettoEconomiaBilancio {
 		JLabel lblValore = new JLabel("Valore:");
 		horizontalBox.add(lblValore);
 
-		JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
-		spinner.setMinimumSize(new Dimension(120, 20));
-		spinner.setMaximumSize(new Dimension(120, 20));
-		horizontalBox.add(spinner);
+		spinnerValore = new JSpinner();
+		spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
+		spinnerValore.setMinimumSize(new Dimension(120, 20));
+		spinnerValore.setMaximumSize(new Dimension(120, 20));
+		horizontalBox.add(spinnerValore);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 		panel_3.add(horizontalStrut);
@@ -269,7 +311,7 @@ public class ProgettoEconomiaBilancio {
 		JLabel lblCodice = new JLabel("Voce bilancio:");
 		horizontalBox_1.add(lblCodice);
 
-		JComboBox comboBoxVociBilancio = new JComboBox();
+		comboBoxVociBilancio = new JComboBox<String>();
 		comboBoxVociBilancio.setMinimumSize(new Dimension(150, 22));
 		comboBoxVociBilancio.setMaximumSize(new Dimension(150, 22));
 		horizontalBox_1.add(comboBoxVociBilancio);
@@ -283,8 +325,8 @@ public class ProgettoEconomiaBilancio {
 		JLabel lblDescrizione = new JLabel("Descrizione:");
 		verticalBox_1.add(lblDescrizione);
 
-		JTextPane textPane = new JTextPane();
-		verticalBox_1.add(textPane);
+		textNote = new JTextPane();
+		verticalBox_1.add(textNote);
 
 		JPanel panel_5 = new JPanel();
 		panel_2.add(panel_5, "cell 0 2,grow");
@@ -293,7 +335,12 @@ public class ProgettoEconomiaBilancio {
 		btnInserisciMastrino.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				aggiungiMastrinoAlDB();
+				/*
+				 * Inserito controllo su azienda e anno bilancio quando si aggiunge il mastrino
+				 */
+				if (comboAzienda.getSelectedItem().toString() != "*Azienda non selezionata!*"
+						&& comboBoxBilancio.getSelectedItem().toString().length() > 0)
+					aggiungiMastrinoAlDB();
 			}
 		});
 		panel_5.add(btnInserisciMastrino);
@@ -321,6 +368,8 @@ public class ProgettoEconomiaBilancio {
 			}
 		});
 
+		/* Inserisce nella comboAzienda le aziende che sono state inserite */
+		aggiornaComboAzienda();
 	}
 
 	/**
@@ -331,7 +380,7 @@ public class ProgettoEconomiaBilancio {
 	 * @param type true ->attivo, false ->passivo
 	 */
 
-	private void aggiornaComboVociBilancio(JComboBox comboBoxVociBilancio, boolean type) {
+	private void aggiornaComboVociBilancio(JComboBox<String> comboBoxVociBilancio, boolean type) {
 		/*
 		 * Aggiunta alla combo delle voci del bilancio
 		 */
@@ -415,14 +464,14 @@ public class ProgettoEconomiaBilancio {
 					"Seleziona il nome dell'azienda che vuoi cancellare", "Cancellazione Azienda",
 					JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
 		}
-		
+
 		String qry = "DELETE FROM Aziende WHERE Nome = '" + aziendaselezionata + "'";
 		try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
 			pstmt.executeUpdate();
 		} catch (SQLException p) {
 			System.out.println(p.getMessage());
 		}
-		
+
 		aggiornaComboAzienda();
 
 	}
@@ -432,6 +481,39 @@ public class ProgettoEconomiaBilancio {
 	 *         pagina e inserirle all'interno del DB
 	 */
 	private void aggiungiMastrinoAlDB() {
+		try (Connection conn = Globs.connect()) {
+			int idAzienda = 0;
+			int idBilancio = 0;
+			Statement stmt = conn.createStatement();
+			String qry1 = "SELECT id FROM Aziende WHERE Nome = '" + comboAzienda.getSelectedItem().toString() + "';";
+			ResultSet rs1 = stmt.executeQuery(qry1);
+			if (rs1.next())
+				idAzienda = rs1.getInt("id");
+
+			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " && Anno = "
+					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + ";";
+			ResultSet rs2 = stmt.executeQuery(qry2);
+			if (rs2.next())
+				idBilancio = rs2.getInt("id");
+
+			String dare_avere = "Dare";
+			if (rdbtnAvere.isSelected())
+				dare_avere = "Avere";
+
+			String attivo_passivo = "Passivo";
+			if (rdbtnAttivo.isSelected())
+				attivo_passivo = "Attivo";
+
+			String qry = "INSERT INTO Mastrini (id, Anno, Voce, Euro, InOut, Attivo, Note) VALUES (idBilancio, '"
+					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + "', '"
+					+ comboBoxVociBilancio.getSelectedItem().toString() + "', " + spinnerValore.getValue() + ", '"
+					+ dare_avere + "', '" + attivo_passivo + "', '" + textNote.getText() + "' )";
+
+			PreparedStatement pstmt = conn.prepareStatement(qry);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		aggiornaTabella();
 	}
 
@@ -441,6 +523,83 @@ public class ProgettoEconomiaBilancio {
 	 *         tabella popolandola con tutti i campi
 	 */
 	private void aggiornaTabella() {
+		try (Connection conn = Globs.connect()) {
+			int idAzienda = 0;
+			int idBilancio = 0;
+			Statement stmt = conn.createStatement();
+			String qry1 = "SELECT id FROM Aziende WHERE Nome = '" + comboAzienda.getSelectedItem().toString() + "';";
+			ResultSet rs1 = stmt.executeQuery(qry1);
+			if (rs1.next()) {
+				idAzienda = rs1.getInt("id");
+			}
+			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " && Anno = "
+					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + ";";
+			ResultSet rs2 = stmt.executeQuery(qry2);
+			if (rs2.next()) {
+				idBilancio = rs2.getInt("id");
+			}
 
+			String query = "SELECT Voce, Euro, InOut, Note FROM Mastrini WHERE id = " + idBilancio + ";";
+			ResultSet rs = stmt.executeQuery(query);
+
+			table.setModel(buildTableModel(rs));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+//        Vector<String> columnNames;
+//		columnNames.add(" ");
+//        columnNames.add("Column 1");
+//        columnNames.add("Column 2");
+//        DefaultTableModel model = new DefaultTableModel(buildTableModel(rs), columnNames);
+	}
+
+	public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+
+		ResultSetMetaData metaData = rs.getMetaData();
+
+		// names of columns
+		Vector<String> columnNames = new Vector<String>();
+		int columnCount = metaData.getColumnCount();
+		for (int column = 1; column <= columnCount; column++) {
+			columnNames.add(metaData.getColumnName(column));
+		}
+
+		// data of the table
+		Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+		while (rs.next()) {
+			Vector<Object> vector = new Vector<Object>();
+			for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+				vector.add(rs.getObject(columnIndex));
+			}
+			data.add(vector);
+		}
+
+		return new DefaultTableModel(data, columnNames);
+
+	}
+
+	/**
+	 * @author Davide Qui viene creato l'header della tabella
+	 */
+	private void creaHeaderTabella() {
+
+	}
+
+	/**
+	 * @author Matteo Metodo utilizzato dalla classe inserisci ilancio per
+	 *         verificare che non sia già sttao inserito un bilancio con per lo
+	 *         stesso anno
+	 * @param anno
+	 * @return false->inserito true -> non inserito
+	 */
+
+	public boolean getAnnoBilanci(int anno) {
+		int size = comboBoxBilancio.getItemCount();
+		for (int i = 0; i < size; i++) {
+			if (anno == Integer.parseInt(comboBoxBilancio.getItemAt(i)))
+				return false;
+		}
+		return true;
 	}
 }

@@ -98,8 +98,10 @@ public class Globs {
 		 * cui un bilancio è associato all'azienda Reference - è un identificativo
 		 * univoco del bilancio in questione
 		 */
-		String sql3 = "CREATE TABLE IF NOT EXISTS Bilanci ( " + "	   id           INTEGER REFERENCES Aziende (id), "
-				+ "    Reference    INTEGER PRIMARY KEY AUTOINCREMENT, " + "    Anno         INTEGER, "
+		String sql3 = "CREATE TABLE IF NOT EXISTS Bilanci ( "
+				+ "	   id           INTEGER REFERENCES Aziende (id), "
+				+ "    Reference    INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ "    Anno         INTEGER, "
 				+ "    Note         CHAR (300) " + ");";
 		
 		/*
@@ -111,8 +113,12 @@ public class Globs {
 		 * - nel conto id - è connesso a un bilancio tramite la variabile Reference
 		 */
 		String sql2 = "CREATE TABLE IF NOT EXISTS Mastrini ( "
-				+ "    id    		INTEGER REFERENCES Bilanci (Reference), " + "    Anno         INTEGER, "
-				+ "    Voce         INTEGER, " + "    Euro         DOUBLE, " + "    InOut        INTEGER, "
+				+ "    id    		INTEGER REFERENCES Bilanci (Reference), " 
+				+ "    Anno         INTEGER, "
+				+ "    Voce         CHAR (100), "
+				+ "    Euro         DOUBLE, "
+				+ "    InOut        CHAR (10), "
+				+ "    Attivo       CHAR (10), "
 				+ "    Note         CHAR (300) " + ");";
 
 		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
