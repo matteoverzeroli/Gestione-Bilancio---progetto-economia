@@ -103,6 +103,7 @@ public class ProgettoEconomiaBilancio {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		aggiornaTabella();
 	}
 
 	/**
@@ -125,6 +126,7 @@ public class ProgettoEconomiaBilancio {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		aggiornaTabella();
 	}
 
 	/**
@@ -221,6 +223,13 @@ public class ProgettoEconomiaBilancio {
 		panel.add(lblBilancio, "cell 0 0,alignx trailing");
 
 		comboBoxBilancio = new JComboBox<String>();
+		comboBoxBilancio.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (comboBoxBilancio.getItemCount() != 0 && comboBoxBilancio.getSelectedItem().toString() != null) {
+					aggiornaTabella();
+				}
+			}
+		});
 		panel.add(comboBoxBilancio, "flowx,cell 1 0,growx");
 
 		JButton btnCreaBilancio = new JButton("Inserisci Bilancio");
@@ -482,6 +491,7 @@ public class ProgettoEconomiaBilancio {
 		}
 
 		String qry = "DELETE FROM Aziende WHERE Nome = '" + aziendaselezionata + "'";
+//TODO: bisogna eliminare anche i bilanci e i mastrini collegati all'azienda.
 		try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
 			pstmt.executeUpdate();
 		} catch (SQLException p) {
@@ -489,7 +499,6 @@ public class ProgettoEconomiaBilancio {
 		}
 
 		aggiornaComboAzienda();
-
 	}
 
 	/**
@@ -570,6 +579,15 @@ public class ProgettoEconomiaBilancio {
 	 *         tabella popolandola con tutti i campi
 	 */
 	private void aggiornaTabella() {
+		if(comboBoxBilancio.getItemCount() == 0)
+		{
+			DefaultTableModel dm = (DefaultTableModel) table.getModel();
+			int rowCount = dm.getRowCount();
+			for (int i = rowCount - 1; i >= 0; i--) {
+			    dm.removeRow(i);
+			}
+			return;
+		}
 		try (Connection conn = Globs.connect()) {
 			int idAzienda = 0;
 			int idBilancio = 0;
@@ -640,7 +658,6 @@ public class ProgettoEconomiaBilancio {
 	 * @param anno
 	 * @return false -> inserito true -> non inserito
 	 */
-
 	public boolean getAnnoBilanci(int anno) {
 		try (Connection conn = Globs.connect()) {
 			int idAzienda = 0;
