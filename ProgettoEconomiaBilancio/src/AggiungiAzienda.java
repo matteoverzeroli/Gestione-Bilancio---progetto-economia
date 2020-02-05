@@ -14,6 +14,22 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import java.awt.Component;
+import javax.swing.Box;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.DropMode;
+import java.awt.Window.Type;
 
 public class AggiungiAzienda extends JFrame {
 	// CAMPI
@@ -44,45 +60,112 @@ public class AggiungiAzienda extends JFrame {
 	 * Create the frame.
 	 */
 	public AggiungiAzienda() {
+		setResizable(false);
+		setTitle("Aggiungi azienda\r\n");
 
 		homeWindow = Globs.getHomeWindow(); // setta homeWindows con il riferimento alla finestra
 											// ProgettoEconomiaBilancio
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 276, 283);
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.BLACK);
+		contentPane.setBackground(Color.LIGHT_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 
-		JLabel lblNome = new JLabel("Nome:");
-		lblNome.setForeground(Color.WHITE);
-		lblNome.setBounds(10, 11, 48, 14);
-		contentPane.add(lblNome);
+		JLabel lblNome = new JLabel("Nome azienda:");
+		lblNome.setForeground(Color.BLACK);
 
 		textNome = new JTextField();
-		textNome.setBounds(50, 8, 96, 20);
-		contentPane.add(textNome);
 		textNome.setColumns(10);
 
-		JButton btnOk = new JButton("OK");
-
-		btnOk.addActionListener(e -> {
-			if (controlloDatiInseriti()) {
-				aggiungiAziendaAlDB(); // aggiungo azienza inserita al db dopo aver controllato validità dei dati
-			}
-		});
-
-		btnOk.setBounds(339, 231, 89, 23);
-		contentPane.add(btnOk);
-
 		textDescrizione = new JTextField();
-		textDescrizione.setText("Descrizione ");
-		textDescrizione.setBounds(50, 63, 86, 20);
-		contentPane.add(textDescrizione);
+		textDescrizione.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textDescrizione.setToolTipText("dato necessario\r\n");
+		textDescrizione.setHorizontalAlignment(SwingConstants.LEFT);
+		textDescrizione.setForeground(Color.GRAY);
 		textDescrizione.setColumns(10);
-		setVisible(true);
+		
+		JLabel lblH = DefaultComponentFactory.getInstance().createLabel("Descrizione azienda:");
+		lblH.setForeground(Color.BLACK);
+		
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+						
+						JLabel label_1 = new JLabel("");
+						
+						JLabel label_2 = new JLabel("");
+						
+						JLabel label_3 = new JLabel("");
+						
+						JLabel label_4 = new JLabel("");
+						
+								JButton btnOk = new JButton("OK");
+								
+										btnOk.addActionListener(e -> {
+											if (controlloDatiInseriti()) {
+												aggiungiAziendaAlDB(); // aggiungo azienza inserita al db dopo aver controllato validità dei dati
+											}
+										});
+										GroupLayout gl_contentPane = new GroupLayout(contentPane);
+										gl_contentPane.setHorizontalGroup(
+											gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addGap(6)
+															.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+																.addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE)
+																.addComponent(textNome, 186, 186, 186)
+																.addComponent(lblH, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
+																.addComponent(textDescrizione, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE)))
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addGap(192)
+															.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)))
+													.addGap(268)
+													.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addComponent(horizontalStrut, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+															.addComponent(horizontalStrut_1, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+															.addComponent(label_2, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+															.addGap(84)
+															.addComponent(label_3, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
+															.addComponent(label_4, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))))
+										);
+										gl_contentPane.setVerticalGroup(
+											gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addGroup(gl_contentPane.createSequentialGroup()
+													.addGap(5)
+													.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+																.addComponent(horizontalStrut, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+																.addComponent(horizontalStrut_1, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE))
+															.addGap(0, 0, Short.MAX_VALUE)
+															.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+																.addComponent(label_2, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+																.addComponent(label_4, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+																.addGroup(gl_contentPane.createSequentialGroup()
+																	.addPreferredGap(ComponentPlacement.RELATED)
+																	.addComponent(label_3, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE))
+																.addComponent(label_1, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)))
+														.addGroup(gl_contentPane.createSequentialGroup()
+															.addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
+															.addGap(3)
+															.addComponent(textNome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+															.addPreferredGap(ComponentPlacement.RELATED)
+															.addComponent(lblH)
+															.addPreferredGap(ComponentPlacement.RELATED)
+															.addComponent(textDescrizione, GroupLayout.PREFERRED_SIZE, 122, GroupLayout.PREFERRED_SIZE)
+															.addGap(18)
+															.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
+													.addContainerGap())
+										);
+										contentPane.setLayout(gl_contentPane);
+										setVisible(true);
 	}
 
 	/**
@@ -102,6 +185,7 @@ public class AggiungiAzienda extends JFrame {
 		 */
 		try {
 			nomeinserito = textNome.getText();
+			textDescrizione.setEnabled(true);
 		} catch (NullPointerException exception) {
 			finestraErrore("Dati inseriti in \"Nome\" non validi!");
 			return false;
@@ -120,6 +204,7 @@ public class AggiungiAzienda extends JFrame {
 		/*
 		 * Controlli sulla descrizione inserita
 		 */
+		
 		try {
 			descrizioneinserita = textDescrizione.getText();
 		} catch (NullPointerException exception) {

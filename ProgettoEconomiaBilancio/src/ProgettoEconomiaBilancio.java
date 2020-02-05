@@ -58,6 +58,7 @@ public class ProgettoEconomiaBilancio {
 	private JRadioButton rdbtnPassivo;
 	private JRadioButton rdbtnDare;
 	private JRadioButton rdbtnAvere;
+	private JRadioButton rdbtnContoEconomico;
 
 	/**
 	 * Launch the application.
@@ -274,7 +275,7 @@ public class ProgettoEconomiaBilancio {
 		verticalBox_2.add(rdbtnPassivo);
 		gruppoAttivoPassivoContoEconomico.add(rdbtnPassivo);
 
-		JRadioButton rdbtnContoEconomico = new JRadioButton("Conto Economico");
+		rdbtnContoEconomico = new JRadioButton("Conto Economico");
 		rdbtnContoEconomico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				comboBoxVociBilancio.removeAllItems();
@@ -365,11 +366,6 @@ public class ProgettoEconomiaBilancio {
 		btnInserisciMastrino.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				/*
-				 * Inserito controllo su azienda e anno bilancio quando si aggiunge il mastrino
-				 */
-				if (comboAzienda.getSelectedItem().toString() != "*Azienda non selezionata!*"
-						&& comboBoxBilancio.getSelectedItem().toString().length() > 0)
 					aggiungiMastrinoAlDB();
 			}
 		});
@@ -498,9 +494,22 @@ public class ProgettoEconomiaBilancio {
 
 	/**
 	 * @author Davide Qua dentro bisognerà estrarre tutte le informazioni della
-	 *         pagina e inserirle all'interno del DB
+	 *         pagina e inserirle all'interno del DB. Inseriti anche i controlli sulla selezione
+	 *         dei radio button.
 	 */
 	private void aggiungiMastrinoAlDB() {
+		if(comboAzienda.getSelectedItem().toString() == "*Azienda non selezionata!*")
+		{
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Selezionare un'azienda prima di procedere!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if(comboBoxBilancio.getItemCount() == 0)
+		{
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Selezionare un bilancio prima di procedere!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		try (Connection conn = Globs.connect()) {
 			int idAzienda = 0;
 			int idBilancio = 0;
@@ -510,21 +519,39 @@ public class ProgettoEconomiaBilancio {
 			if (rs1.next())
 				idAzienda = rs1.getInt("id");
 
-			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " && Anno = "
+			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " AND Anno = "
 					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + ";";
 			ResultSet rs2 = stmt.executeQuery(qry2);
 			if (rs2.next())
-				idBilancio = rs2.getInt("id");
+				idBilancio = rs2.getInt("Reference");
 
-			String dare_avere = "Dare";
+			String dare_avere;
 			if (rdbtnAvere.isSelected())
 				dare_avere = "Avere";
+			else if(rdbtnDare.isSelected())
+				dare_avere = "Dare";
+			else
+			{
+				JFrame frame = new JFrame("Show Message Box");
+				JOptionPane.showMessageDialog(frame, "Selezionare 'Dare' o 'Avere'!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
-			String attivo_passivo = "Passivo";
+			String attivo_passivo;
 			if (rdbtnAttivo.isSelected())
 				attivo_passivo = "Attivo";
+			else if (rdbtnPassivo.isSelected())
+				attivo_passivo = "Passivo";
+			else if (rdbtnContoEconomico.isSelected())
+				attivo_passivo = "Conto Economico";
+			else {
+				JFrame frame = new JFrame("Show Message Box");
+				JOptionPane.showMessageDialog(frame, "Selezionare 'Attivo', 'Passivo' o 'Conto Economico'!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
-			String qry = "INSERT INTO Mastrini (id, Anno, Voce, Euro, InOut, Attivo, Note) VALUES (idBilancio, '"
+			String qry = "INSERT INTO Mastrini (id, Anno, Voce, Euro, InOut, Attivo, Note) VALUES ("
+					+ String.valueOf(idBilancio) + ", '"
 					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + "', '"
 					+ comboBoxVociBilancio.getSelectedItem().toString() + "', " + spinnerValore.getValue() + ", '"
 					+ dare_avere + "', '" + attivo_passivo + "', '" + textNote.getText() + "' )";
@@ -552,11 +579,11 @@ public class ProgettoEconomiaBilancio {
 			if (rs1.next()) {
 				idAzienda = rs1.getInt("id");
 			}
-			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " && Anno = "
+			String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " AND Anno = "
 					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + ";";
 			ResultSet rs2 = stmt.executeQuery(qry2);
 			if (rs2.next()) {
-				idBilancio = rs2.getInt("id");
+				idBilancio = rs2.getInt("Reference");
 			}
 
 			String query = "SELECT Voce, Euro, InOut, Note FROM Mastrini WHERE id = " + idBilancio + ";";
@@ -607,19 +634,32 @@ public class ProgettoEconomiaBilancio {
 	}
 
 	/**
-	 * @author Matteo Metodo utilizzato dalla classe inserisci Bilancio per
-	 *         verificare che non sia già sttao inserito un bilancio con per lo
-	 *         stesso anno
+	 * @author Davide Metodo utilizzato dalla classe inserisci bilancio per
+	 *         verificare che non sia già stato inserito un bilancio con lo stesso
+	 *         anno.
 	 * @param anno
-	 * @return false->inserito true -> non inserito
+	 * @return false -> inserito true -> non inserito
 	 */
 
 	public boolean getAnnoBilanci(int anno) {
-		int size = comboBoxBilancio.getItemCount();
-		for (int i = 0; i < size; i++) {
-			if (anno == Integer.parseInt(comboBoxBilancio.getItemAt(i)))
+		try (Connection conn = Globs.connect()) {
+			int idAzienda = 0;
+			Statement stmt = conn.createStatement();
+			String qry1 = "SELECT id FROM Aziende WHERE Nome = '" + comboAzienda.getSelectedItem().toString() + "';";
+			ResultSet rs1 = stmt.executeQuery(qry1);
+			if (rs1.next())
+				idAzienda = rs1.getInt("id");
+
+			String qry2 = "SELECT Reference FROM Bilanci WHERE Anno = '" + String.valueOf(anno) + "' AND id = "
+					+ idAzienda + ";";
+			ResultSet rs2 = stmt.executeQuery(qry2);
+			if (rs2.next())
 				return false;
+			else
+				return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 }
