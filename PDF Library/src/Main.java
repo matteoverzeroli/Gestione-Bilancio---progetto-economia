@@ -19,7 +19,7 @@ public class Main {
 	public static void main(String[] args) throws FileNotFoundException {
 	
 	      // Creating a PdfWriter       
-	      String dest = "C:\\Users\\matte\\Desktop\\Nuova cartella\\sample.pdf";       
+	      String dest = "C:\\Users\\matte\\Desktop\\sample.pdf";       
 	      PdfWriter writer = new PdfWriter(dest); 
 	   
 	      // Creating a PdfDocument       
