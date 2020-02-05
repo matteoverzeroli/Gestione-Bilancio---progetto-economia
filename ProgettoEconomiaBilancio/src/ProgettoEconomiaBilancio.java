@@ -148,6 +148,7 @@ public class ProgettoEconomiaBilancio {
 								FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
 		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
 		frame.getContentPane().add(toolBar, "1, 1, fill, top");
 
 		JLabel lblAzienda = new JLabel("Azienda:");
