@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import com.jgoodies.forms.layout.Sizes;
 import net.miginfocom.swing.MigLayout;
 import vocibilancio.VociBilancioAttivo;
+import vocibilancio.VociBilancioContoEconomico;
 import vocibilancio.VociBilancioPassivo;
 
 import javax.swing.BoxLayout;
@@ -256,41 +257,47 @@ public class ProgettoEconomiaBilancio {
 		JPanel panel_3 = new JPanel();
 		panel_2.add(panel_3, "cell 0 0,grow");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
-				
-				Box verticalBox_2 = Box.createVerticalBox();
-				panel_3.add(verticalBox_2);
-		
-				rdbtnAttivo = new JRadioButton("Attivo");
-				verticalBox_2.add(rdbtnAttivo);
-				/*
-				 * Creazione gruppo di radiobuttons affinchè sia possibile selezionare un solo
-				 * radiobutton per gruppo alla volta
-				 * 
-				 */
-				ButtonGroup gruppoAttivoPassivoContoEconomico = new ButtonGroup();
 
-						rdbtnPassivo = new JRadioButton("Passivo");
-						verticalBox_2.add(rdbtnPassivo);
-						gruppoAttivoPassivoContoEconomico.add(rdbtnPassivo);
-						
-						JRadioButton rdbtnContoEconomico = new JRadioButton("Conto Economico");
-						verticalBox_2.add(rdbtnContoEconomico);
-						gruppoAttivoPassivoContoEconomico.add(rdbtnContoEconomico);
-						
-								rdbtnPassivo.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent arg0) {
-										comboBoxVociBilancio.removeAllItems();
-										aggiornaComboVociBilancio(comboBoxVociBilancio, false);
-									}
-								});
-				
-						rdbtnAttivo.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								comboBoxVociBilancio.removeAllItems();
-								aggiornaComboVociBilancio(comboBoxVociBilancio, true);
-							}
-						});
-				gruppoAttivoPassivoContoEconomico.add(rdbtnAttivo);
+		Box verticalBox_2 = Box.createVerticalBox();
+		panel_3.add(verticalBox_2);
+
+		rdbtnAttivo = new JRadioButton("Attivo");
+		verticalBox_2.add(rdbtnAttivo);
+		/*
+		 * Creazione gruppo di radiobuttons affinchè sia possibile selezionare un solo
+		 * radiobutton per gruppo alla volta
+		 * 
+		 */
+		ButtonGroup gruppoAttivoPassivoContoEconomico = new ButtonGroup();
+
+		rdbtnPassivo = new JRadioButton("Passivo");
+		verticalBox_2.add(rdbtnPassivo);
+		gruppoAttivoPassivoContoEconomico.add(rdbtnPassivo);
+
+		JRadioButton rdbtnContoEconomico = new JRadioButton("Conto Economico");
+		rdbtnContoEconomico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxVociBilancio.removeAllItems();
+				aggiornaComboVociBilancio(comboBoxVociBilancio, 2);
+			}
+		});
+		verticalBox_2.add(rdbtnContoEconomico);
+		gruppoAttivoPassivoContoEconomico.add(rdbtnContoEconomico);
+
+		rdbtnPassivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxVociBilancio.removeAllItems();
+				aggiornaComboVociBilancio(comboBoxVociBilancio, 1);
+			}
+		});
+
+		rdbtnAttivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				comboBoxVociBilancio.removeAllItems();
+				aggiornaComboVociBilancio(comboBoxVociBilancio, 0);
+			}
+		});
+		gruppoAttivoPassivoContoEconomico.add(rdbtnAttivo);
 
 		Box verticalBox = Box.createVerticalBox();
 		panel_3.add(verticalBox);
@@ -303,7 +310,6 @@ public class ProgettoEconomiaBilancio {
 		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
 		verticalBox.add(rdbtnAvere);
 
-		
 		ButtonGroup gruppoDareAvere = new ButtonGroup();
 		gruppoDareAvere.add(rdbtnDare);
 		gruppoDareAvere.add(rdbtnAvere);
@@ -336,7 +342,7 @@ public class ProgettoEconomiaBilancio {
 		comboBoxVociBilancio.setMinimumSize(new Dimension(100, 22));
 		comboBoxVociBilancio.setMaximumSize(new Dimension(150, 22));
 		horizontalBox_1.add(comboBoxVociBilancio);
-		
+
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		horizontalBox_1.add(horizontalGlue_1);
 
@@ -387,19 +393,23 @@ public class ProgettoEconomiaBilancio {
 	 * selezione dei radio button corripondenti
 	 * 
 	 * @author Matteo
-	 * @param type true ->attivo, false ->passivo
+	 * @param type 0 ->attivo, 1 ->passivo, 2->conto economico
 	 */
 
-	private void aggiornaComboVociBilancio(JComboBox<String> comboBoxVociBilancio, boolean type) {
+	private void aggiornaComboVociBilancio(JComboBox<String> comboBoxVociBilancio, int type) {
 		/*
 		 * Aggiunta alla combo delle voci del bilancio
 		 */
-		if (type) {
+		if (type == 0) {
 			for (VociBilancioAttivo voce : VociBilancioAttivo.values()) {
 				comboBoxVociBilancio.addItem(voce.toString());
 			}
-		} else {
+		} else if (type == 1) {
 			for (VociBilancioPassivo voce : VociBilancioPassivo.values()) {
+				comboBoxVociBilancio.addItem(voce.toString());
+			}
+		} else if (type == 2) {
+			for (VociBilancioContoEconomico voce : VociBilancioContoEconomico.values()) {
 				comboBoxVociBilancio.addItem(voce.toString());
 			}
 		}
@@ -597,7 +607,7 @@ public class ProgettoEconomiaBilancio {
 	}
 
 	/**
-	 * @author Matteo Metodo utilizzato dalla classe inserisci ilancio per
+	 * @author Matteo Metodo utilizzato dalla classe inserisci Bilancio per
 	 *         verificare che non sia già sttao inserito un bilancio con per lo
 	 *         stesso anno
 	 * @param anno
