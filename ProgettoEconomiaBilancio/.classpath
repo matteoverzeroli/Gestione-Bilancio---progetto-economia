@@ -10,5 +10,19 @@
 	<classpathentry kind="lib" path="libraries/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="lib" path="libraries/sqlite-jdbc-3.27.2.1.jar"/>
 	<classpathentry kind="lib" path="libraries/miglayout15-swing.jar"/>
+	<classpathentry kind="lib" path="libraries/barcodes-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/font-asian-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/forms-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/hyph-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/io-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/kernel-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/layout-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/pdfa-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/pdftest-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/sign-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/slf4j-api-1.7.9.jar"/>
+	<classpathentry kind="lib" path="libraries/slf4j-nop-1.7.9.jar"/>
+	<classpathentry kind="lib" path="libraries/styled-xml-parser-7.1.9.jar"/>
+	<classpathentry kind="lib" path="libraries/svg-7.1.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
