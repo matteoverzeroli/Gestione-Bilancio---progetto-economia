@@ -1,3 +1,4 @@
+package home;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -12,24 +13,16 @@ import javax.swing.JButton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.Component;
 import javax.swing.Box;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.DropMode;
-import java.awt.Window.Type;
+
 
 public class AggiungiAzienda extends JFrame {
 	// CAMPI
