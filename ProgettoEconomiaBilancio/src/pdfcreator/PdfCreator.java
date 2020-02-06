@@ -1,6 +1,14 @@
 package pdfcreator;
 
 import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -16,75 +24,106 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 
 import home.Globs;
+import home.ProgettoEconomiaBilancio;
 import vocibilancio.VociBilancioAttivo;
 import vocibilancio.VociBilancioContoEconomico;
 import vocibilancio.VociBilancioPassivo;
 
 public class PdfCreator {
-	public void creaPdfBilancio() {
+	private static ProgettoEconomiaBilancio homewindow;
 
-		try {
-			// Creating a PdfWriter
-			String destinazione = "generatedpdf\\sample.pdf";
-			PdfWriter writer = new PdfWriter(destinazione);
+	public static void creaPdfBilancio() {
+		homewindow = Globs.getHomeWindow();
 
-			// Creating a PdfDocument
-			PdfDocument pdfDoc = new PdfDocument(writer);
+		if (homewindow.getAziendaSelected() != null && homewindow.getBilancioSelected() != -1) {
+			try {
+				// Creating a PdfWriter
+				String destinazione = "generatedpdf\\" + homewindow.getAziendaSelected() + "_"
+						+ homewindow.getBilancioSelected() + ".pdf";
+				PdfWriter writer = new PdfWriter(destinazione);
 
-			// Adding a new page
-			pdfDoc.addNewPage();
+				// Creating a PdfDocument
+				PdfDocument pdfDoc = new PdfDocument(writer);
 
-			// Creating a Document
-			Document document = new Document(pdfDoc);
+				// Adding a new page
+				pdfDoc.addNewPage();
 
-			// Creating paragraphs
-			String para1 = "BILANCIO AZIENDA PIPPO 2020";
+				// Creating a Document
+				Document document = new Document(pdfDoc);
 
-			Paragraph paragraph1 = new Paragraph(para1);
+				// Creating paragraphs
+				String para1 = "BILANCIO AZIENDA " + homewindow.getAziendaSelected() + " "
+						+ homewindow.getBilancioSelected();
 
-			// Adding paragraph
-			document.add(paragraph1);
+				Paragraph paragraph1 = new Paragraph(para1);
 
-			titoliTabella1("ATTIVO", document);
+				// Adding paragraph
+				document.add(paragraph1);
 
-			float[] pointColumnWidths = { 400F, 123F }; // massimo somma 523f
-			Table table = new Table(pointColumnWidths);
+				titoliTabella1("ATTIVO", document);
 
-			for (VociBilancioAttivo voce : VociBilancioAttivo.values()) {
-				titoliTabella2(voce.toString(), "1", table);
+				float[] pointColumnWidths = { 400F, 123F }; // massimo somma 523f
+				Table tableattivo = new Table(pointColumnWidths);
+				Table tablepassivo = new Table(pointColumnWidths);
+				Table tablecontoeconomico = new Table(pointColumnWidths);
+
+				ArrayList<String> voce = new ArrayList<String>();
+				ArrayList<String> attivo = new ArrayList<String>();
+				ArrayList<Double> euro = new ArrayList<Double>();
+				ArrayList<String> dareavere = new ArrayList<String>();
+				// TODO le note?
+
+				try (Connection conn = Globs.connect()) {
+					int idAzienda = 0;
+					int idBilancio = 0;
+					Statement stmt = conn.createStatement();
+					String qry1 = "SELECT id FROM Aziende WHERE Nome = '" + homewindow.getAziendaSelected() + "';";
+					ResultSet rs1 = stmt.executeQuery(qry1);
+					if (rs1.next()) {
+						idAzienda = rs1.getInt("id");
+					}
+					String qry2 = "SELECT Reference FROM Bilanci WHERE id = " + idAzienda + " AND Anno = "
+							+ String.valueOf(homewindow.getBilancioSelected()) + ";";
+					ResultSet rs2 = stmt.executeQuery(qry2);
+					if (rs2.next()) {
+						idBilancio = rs2.getInt("Reference");
+					}
+
+					String query = "SELECT Voce, Euro, InOut, Attivo, Note FROM Mastrini WHERE id = " + idBilancio
+							+ ";";
+					ResultSet rs = stmt.executeQuery(query);
+
+					while (rs.next()) {
+						voce.add(rs.getString("Voce"));
+						attivo.add(rs.getString("Attivo"));
+						euro.add(rs.getDouble("Euro"));
+						dareavere.add(rs.getString("InOut"));
+					}
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+				sommaMastriniConUgualeVoce(voce, attivo, euro, dareavere, tableattivo, tablepassivo,
+						tablecontoeconomico);
+
+				document.add(tableattivo);
+				document.add(new AreaBreak());
+				titoliTabella1("PASSIVO", document);
+				document.add(tablepassivo);
+				document.add(new AreaBreak());
+				titoliTabella1("CONTO ECONOMICO", document);
+				document.add(tablecontoeconomico);
+
+				// Closing the document
+				document.close();
+				JFrame frame = new JFrame("Show Message Box");
+				JOptionPane.showMessageDialog(frame, homewindow.getAziendaSelected() + "_"
+						+ homewindow.getBilancioSelected() + ".pdf" + " salvato!!!", "Informazione",
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (FileNotFoundException e) {
+				// TODO: handle exception
 			}
-
-			document.add(table);
-
-			document.add(new AreaBreak());
-
-			titoliTabella1("PASSIVO", document);
-
-			table = new Table(pointColumnWidths);
-
-			for (VociBilancioPassivo voce : VociBilancioPassivo.values()) {
-				titoliTabella2(voce.toString(), "1", table);
-			}
-
-			document.add(table);
-
-			document.add(new AreaBreak());
-
-			titoliTabella1("CONTO ECONOMICO", document);
-
-			table = new Table(pointColumnWidths);
-
-			for (VociBilancioContoEconomico voce : VociBilancioContoEconomico.values()) {
-				titoliTabella2(voce.toString(), "1", table);
-			}
-
-			document.add(table);
-
-			// Closing the document
-			document.close();
-			System.out.println("PDF Created");
-		} catch (FileNotFoundException e) {
-			// TODO: handle exception
 		}
 	}
 
@@ -128,6 +167,105 @@ public class PdfCreator {
 		cell2.add(new Paragraph(cellcontent2));
 
 		table.addCell(cell2);
+	}
+
+	/**
+	 * somma i mastrini sotto la stessa voce tenendo conto se sono in dare o avere
+	 */
+
+	private static void sommaMastriniConUgualeVoce(ArrayList<String> voce, ArrayList<String> attivo,
+			ArrayList<Double> euro, ArrayList<String> dareavere, Table tableattivo, Table tablepassivo,
+			Table tablecontoeconoico) {
+		int[] indicimastriniattivo = new int[voce.size()];
+		resetIndici(indicimastriniattivo);
+		int[] indicimastrinipassivo = new int[voce.size()];
+		resetIndici(indicimastrinipassivo);
+
+		int[] indicimastrinicontoeconomico = new int[voce.size()];
+		resetIndici(indicimastrinicontoeconomico);
+
+		for (int i = 0; i < attivo.size(); i++) {
+			if (attivo.get(i).compareTo("Attivo") == 0) {
+				indicimastriniattivo[i] = 1;
+
+			} else if (attivo.get(i).compareTo("Passivo") == 0) {
+				indicimastrinipassivo[i] = 1;
+			} else {
+				indicimastrinicontoeconomico[i] = 1;
+			}
+		}
+
+		boolean flag = false;
+
+		for (VociBilancioAttivo vociattivo : VociBilancioAttivo.values()) {
+			double sommamastrino = 0;
+			for (int i = 0; i < attivo.size(); i++) {
+				if (indicimastriniattivo[i] == 1) {
+					if (voce.get(i).compareTo(vociattivo.toString()) == 0) {
+						flag = true;
+						if (dareavere.get(i).compareTo("Dare") == 0) {
+							sommamastrino += euro.get(i);
+						} else {
+							sommamastrino -= euro.get(i);
+						}
+					}
+				}
+			}
+			if (flag)
+				titoliTabella2(vociattivo.toString(), String.valueOf(sommamastrino), tableattivo);
+			flag = false;
+
+		}
+
+		for (VociBilancioPassivo vocipassivo : VociBilancioPassivo.values()) {
+			double sommamastrino = 0;
+			for (int i = 0; i < attivo.size(); i++) {
+				if (indicimastrinipassivo[i] == 1) {
+					if (voce.get(i).compareTo(vocipassivo.toString()) == 0) {
+						flag = true;
+						if (dareavere.get(i).compareTo("Dare") == 0) {
+							sommamastrino -= euro.get(i);
+						} else {
+							sommamastrino += euro.get(i);
+						}
+					}
+				}
+			}
+			if (flag)
+				titoliTabella2(vocipassivo.toString(), String.valueOf(sommamastrino), tablepassivo);
+			flag = false;
+
+		}
+		/**
+		 * ATTENZIONE DA
+		 * CONTROLLAREEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 */
+
+		for (VociBilancioContoEconomico vocicontoeconomico : VociBilancioContoEconomico.values()) {
+			double sommamastrino = 0;
+			for (int i = 0; i < attivo.size(); i++) {
+				if (indicimastrinicontoeconomico[i] == 1) {
+					if (voce.get(i).compareTo(vocicontoeconomico.toString()) == 0) {
+						flag = true;
+						if (dareavere.get(i).compareTo("Dare") == 0) {
+							sommamastrino -= euro.get(i);
+						} else {
+							sommamastrino += euro.get(i);
+						}
+					}
+				}
+			}
+			if (flag)
+				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconoico);
+			flag = false;
+
+		}
+	}
+
+	private static void resetIndici(int[] indici) {
+		for (int i = 0; i < indici.length; i++) {
+			indici[i] = 0;
+		}
 	}
 
 }

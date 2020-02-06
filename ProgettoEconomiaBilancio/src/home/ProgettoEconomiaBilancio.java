@@ -1,4 +1,5 @@
 package home;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -28,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.Sizes;
 import net.miginfocom.swing.MigLayout;
+import pdfcreator.PdfCreator;
 import vocibilancio.VociBilancioAttivo;
 import vocibilancio.VociBilancioContoEconomico;
 import vocibilancio.VociBilancioPassivo;
@@ -250,6 +252,12 @@ public class ProgettoEconomiaBilancio {
 		panel.add(btnImportaBilancio, "flowx,cell 1 1");
 
 		JButton btnEsportaBilancio = new JButton("Esporta Bilancio");
+		btnEsportaBilancio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				PdfCreator.creaPdfBilancio();
+			}
+		});
 		panel.add(btnEsportaBilancio, "cell 1 1");
 
 		JPanel panel_1 = new JPanel();
@@ -377,7 +385,7 @@ public class ProgettoEconomiaBilancio {
 		btnInserisciMastrino.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-					aggiungiMastrinoAlDB();
+				aggiungiMastrinoAlDB();
 			}
 		});
 		panel_5.add(btnInserisciMastrino);
@@ -505,20 +513,20 @@ public class ProgettoEconomiaBilancio {
 
 	/**
 	 * @author Davide Qua dentro bisognerà estrarre tutte le informazioni della
-	 *         pagina e inserirle all'interno del DB. Inseriti anche i controlli sulla selezione
-	 *         dei radio button.
+	 *         pagina e inserirle all'interno del DB. Inseriti anche i controlli
+	 *         sulla selezione dei radio button.
 	 */
 	private void aggiungiMastrinoAlDB() {
-		if(comboAzienda.getSelectedItem().toString() == "*Azienda non selezionata!*")
-		{
+		if (comboAzienda.getSelectedItem().toString() == "*Azienda non selezionata!*") {
 			JFrame frame = new JFrame("Show Message Box");
-			JOptionPane.showMessageDialog(frame, "Selezionare un'azienda prima di procedere!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Selezionare un'azienda prima di procedere!", "ERRORE",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		if(comboBoxBilancio.getItemCount() == 0)
-		{
+		if (comboBoxBilancio.getItemCount() == 0) {
 			JFrame frame = new JFrame("Show Message Box");
-			JOptionPane.showMessageDialog(frame, "Selezionare un bilancio prima di procedere!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Selezionare un bilancio prima di procedere!", "ERRORE",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try (Connection conn = Globs.connect()) {
@@ -539,12 +547,12 @@ public class ProgettoEconomiaBilancio {
 			String dare_avere;
 			if (rdbtnAvere.isSelected())
 				dare_avere = "Avere";
-			else if(rdbtnDare.isSelected())
+			else if (rdbtnDare.isSelected())
 				dare_avere = "Dare";
-			else
-			{
+			else {
 				JFrame frame = new JFrame("Show Message Box");
-				JOptionPane.showMessageDialog(frame, "Selezionare 'Dare' o 'Avere'!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Selezionare 'Dare' o 'Avere'!", "ERRORE",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -557,7 +565,8 @@ public class ProgettoEconomiaBilancio {
 				attivo_passivo = "Conto Economico";
 			else {
 				JFrame frame = new JFrame("Show Message Box");
-				JOptionPane.showMessageDialog(frame, "Selezionare 'Attivo', 'Passivo' o 'Conto Economico'!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Selezionare 'Attivo', 'Passivo' o 'Conto Economico'!", "ERRORE",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -581,12 +590,11 @@ public class ProgettoEconomiaBilancio {
 	 *         tabella popolandola con tutti i campi
 	 */
 	private void aggiornaTabella() {
-		if(comboBoxBilancio.getItemCount() == 0)
-		{
+		if (comboBoxBilancio.getItemCount() == 0) {
 			DefaultTableModel dm = (DefaultTableModel) table.getModel();
 			int rowCount = dm.getRowCount();
 			for (int i = rowCount - 1; i >= 0; i--) {
-			    dm.removeRow(i);
+				dm.removeRow(i);
 			}
 			return;
 		}
@@ -681,4 +689,37 @@ public class ProgettoEconomiaBilancio {
 			return false;
 		}
 	}
+
+	/**
+	 * @author Matteo Metodo che restituisce l'anno bilancio selezionato nella
+	 *         combox bilanci
+	 * @return anno selezionato nella combox bilanci
+	 */
+
+	public int getBilancioSelected() {
+		if (comboBoxBilancio.getItemCount() > 0) {
+			return Integer.valueOf(comboBoxBilancio.getSelectedItem().toString());
+		} else {
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Bilancio non selezionato!!!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			return -1;
+		}
+	}
+
+	/**
+	 * @author Matteo Metodo che restituisce l'azienda selezionata nella combox
+	 *         azienda
+	 * @return nome azienda selezionata nella combox
+	 */
+
+	public String getAziendaSelected() {
+		if (comboAzienda.getItemCount() > 0) {
+			return comboAzienda.getSelectedItem().toString();
+		} else {
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Azienda selezionata!!!", "ERRORE", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+	}
+
 }
