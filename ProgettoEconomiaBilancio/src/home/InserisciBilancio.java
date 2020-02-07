@@ -18,6 +18,15 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import java.util.Date;
 import java.util.Calendar;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class InserisciBilancio extends JFrame {
 
@@ -56,10 +65,10 @@ public class InserisciBilancio extends JFrame {
 
 		setBackground(Color.BLACK);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 225, 201);
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.BLACK);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		contentPane.setBackground(Color.LIGHT_GRAY);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
@@ -70,11 +79,15 @@ public class InserisciBilancio extends JFrame {
 				buttonChiudiClicked();
 			}
 		});
-		btnChiudi.setBounds(10, 231, 91, 23);
+		btnChiudi.setBounds(10, 135, 91, 23);
 		contentPane.add(btnChiudi);
 
 		JButton btnOK = new JButton("OK");
-		btnOK.setBounds(365, 231, 63, 23);
+		btnOK.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnOK.setBounds(136, 135, 63, 23);
 		btnOK.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -102,6 +115,7 @@ public class InserisciBilancio extends JFrame {
 
 		contentPane.add(spinnerAnno);
 		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 
 	/**

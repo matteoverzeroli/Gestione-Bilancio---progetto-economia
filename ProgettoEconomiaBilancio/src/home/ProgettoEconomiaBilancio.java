@@ -47,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class ProgettoEconomiaBilancio {
 
@@ -139,8 +140,9 @@ public class ProgettoEconomiaBilancio {
 		Globs.setHomeWindow(this); // setta nella classe Globs il riferimento a questa finestra
 
 		frame = new JFrame();
+		frame.setBackground(Color.LIGHT_GRAY);
 		frame.setMinimumSize(new Dimension(1000, 500));
-		frame.getContentPane().setBackground(Color.BLACK);
+		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane()
 				.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("438px:grow"), },
 						new RowSpec[] { RowSpec.decode("24px"), FormSpecs.RELATED_GAP_ROWSPEC,
@@ -151,6 +153,7 @@ public class ProgettoEconomiaBilancio {
 								FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), }));
 
 		JToolBar toolBar = new JToolBar();
+		toolBar.setBackground(Color.LIGHT_GRAY);
 		toolBar.setFloatable(false);
 		frame.getContentPane().add(toolBar, "1, 1, fill, top");
 
@@ -191,6 +194,9 @@ public class ProgettoEconomiaBilancio {
 		toolBar.add(comboAzienda);
 
 		JButton btnAggiungiAzienda = new JButton("Aggiungi Azienda");
+		btnAggiungiAzienda.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnAggiungiAzienda.setForeground(Color.BLACK);
+		btnAggiungiAzienda.setBackground(Color.GRAY);
 		btnAggiungiAzienda.addMouseListener(new MouseAdapter() {
 			@Override
 			/**
@@ -205,6 +211,12 @@ public class ProgettoEconomiaBilancio {
 		toolBar.add(btnAggiungiAzienda);
 
 		JButton btnCancellaAzienda = new JButton("Cancella Azienda");
+		btnCancellaAzienda.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnCancellaAzienda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnCancellaAzienda.setBackground(Color.GRAY);
 
 		btnCancellaAzienda.addMouseListener(new MouseAdapter() {
 			@Override
@@ -220,6 +232,7 @@ public class ProgettoEconomiaBilancio {
 		toolBar.add(horizontalGlue);
 
 		JPanel panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(panel, "1, 3, fill, fill");
 		panel.setLayout(new MigLayout("", "[][grow]", "[][]"));
 
@@ -252,6 +265,10 @@ public class ProgettoEconomiaBilancio {
 		panel.add(btnImportaBilancio, "flowx,cell 1 1");
 
 		JButton btnEsportaBilancio = new JButton("Esporta Bilancio");
+		btnEsportaBilancio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		btnEsportaBilancio.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -261,6 +278,7 @@ public class ProgettoEconomiaBilancio {
 		panel.add(btnEsportaBilancio, "cell 1 1");
 
 		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(panel_1, "1, 5, fill, fill");
 		panel_1.setLayout(new MigLayout("", "[210px][grow]", "[65px,grow]"));
 
@@ -271,10 +289,12 @@ public class ProgettoEconomiaBilancio {
 		panel_1.add(table, "cell 0 0,aligny baseline");
 
 		JPanel panel_2 = new JPanel();
-		panel_1.add(panel_2, "cell 1 0,grow");
+		panel_2.setBackground(Color.LIGHT_GRAY);
+		panel_1.add(panel_2, "cell 1 0,alignx center,growy");
 		panel_2.setLayout(new MigLayout("", "[grow]", "[100px:n:100px][grow][grow]"));
 
 		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(Color.LIGHT_GRAY);
 		panel_2.add(panel_3, "cell 0 0,grow");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
@@ -282,6 +302,7 @@ public class ProgettoEconomiaBilancio {
 		panel_3.add(verticalBox_2);
 
 		rdbtnAttivo = new JRadioButton("Attivo");
+		rdbtnAttivo.setBackground(Color.LIGHT_GRAY);
 		verticalBox_2.add(rdbtnAttivo);
 		/*
 		 * Creazione gruppo di radiobuttons affinchè sia possibile selezionare un solo
@@ -291,10 +312,12 @@ public class ProgettoEconomiaBilancio {
 		ButtonGroup gruppoAttivoPassivoContoEconomico = new ButtonGroup();
 
 		rdbtnPassivo = new JRadioButton("Passivo");
+		rdbtnPassivo.setBackground(Color.LIGHT_GRAY);
 		verticalBox_2.add(rdbtnPassivo);
 		gruppoAttivoPassivoContoEconomico.add(rdbtnPassivo);
 
 		rdbtnContoEconomico = new JRadioButton("Conto Economico");
+		rdbtnContoEconomico.setBackground(Color.LIGHT_GRAY);
 		rdbtnContoEconomico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				comboBoxVociBilancio.removeAllItems();
@@ -323,9 +346,11 @@ public class ProgettoEconomiaBilancio {
 		panel_3.add(verticalBox);
 
 		rdbtnDare = new JRadioButton("Dare");
+		rdbtnDare.setBackground(Color.LIGHT_GRAY);
 		verticalBox.add(rdbtnDare);
 
 		rdbtnAvere = new JRadioButton("Avere");
+		rdbtnAvere.setBackground(Color.LIGHT_GRAY);
 		rdbtnAvere.setMinimumSize(new Dimension(61, 23));
 		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
 		verticalBox.add(rdbtnAvere);
@@ -341,12 +366,13 @@ public class ProgettoEconomiaBilancio {
 		panel_3.add(horizontalBox);
 
 		JLabel lblValore = new JLabel("Valore:");
+		lblValore.setBackground(Color.LIGHT_GRAY);
 		horizontalBox.add(lblValore);
 
 		spinnerValore = new JSpinner();
 		spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
 		spinnerValore.setMinimumSize(new Dimension(120, 20));
-		spinnerValore.setMaximumSize(new Dimension(120, 20));
+		spinnerValore.setMaximumSize(new Dimension(320, 20));
 		horizontalBox.add(spinnerValore);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
@@ -367,6 +393,7 @@ public class ProgettoEconomiaBilancio {
 		horizontalBox_1.add(horizontalGlue_1);
 
 		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(Color.LIGHT_GRAY);
 		panel_2.add(panel_4, "cell 0 1,grow");
 
 		Box verticalBox_1 = Box.createVerticalBox();
@@ -379,6 +406,7 @@ public class ProgettoEconomiaBilancio {
 		verticalBox_1.add(textNote);
 
 		JPanel panel_5 = new JPanel();
+		panel_5.setBackground(Color.LIGHT_GRAY);
 		panel_2.add(panel_5, "cell 0 2,grow");
 
 		JButton btnInserisciMastrino = new JButton("Inserisci Mastrino");
