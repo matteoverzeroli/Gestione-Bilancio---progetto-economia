@@ -108,9 +108,14 @@ public class PdfCreator {
 						tablecontoeconomico);
 
 				document.add(tableattivo);
+				titoliTabella3("TOTALE ATTIVO", String.valueOf(RisultatiMastrini.getTotaleAttivo()), document);
+
 				document.add(new AreaBreak());
 				titoliTabella1("PASSIVO", document);
 				document.add(tablepassivo);
+				titoliTabella3("TOTALE PASSIVO", String.valueOf(RisultatiMastrini.getTotalePassivo()), document);
+
+				
 				document.add(new AreaBreak());
 				titoliTabella1("CONTO ECONOMICO", document);
 				document.add(tablecontoeconomico);
@@ -161,12 +166,38 @@ public class PdfCreator {
 
 		Cell cell1 = new Cell();
 		cell1.add(new Paragraph(cellcontent1));
-		table.addCell(cell1.setWidth(50));
+
+		table.addCell(cell1);
 
 		Cell cell2 = new Cell();
 		cell2.add(new Paragraph(cellcontent2));
 
 		table.addCell(cell2);
+	}
+
+	/**
+	 * Aggiunge alla tabella le celle contente il totale mastrini
+	 * 
+	 * @param cellcontent1
+	 * @param cellcontent2
+	 * @param table
+	 */
+
+	private static void titoliTabella3(String cellcontent1, String cellcontent2, Document document) {
+		float[] pointColumnWidths = { 400F, 123F };
+		Table table = new Table(pointColumnWidths);
+
+		Cell cell1 = new Cell();
+		cell1.add(new Paragraph(cellcontent1));
+		cell1.setBackgroundColor(new DeviceGray(0.75f));
+		table.addCell(cell1);
+
+		Cell cell2 = new Cell();
+		cell2.add(new Paragraph(cellcontent2));
+
+		table.addCell(cell2);
+
+		document.add(table);
 	}
 
 	/**
@@ -195,7 +226,9 @@ public class PdfCreator {
 			}
 		}
 
-		boolean flag = false;
+		boolean flag = false; // variabile flag per tenere in considerazione solo che voci del quali si sono
+								// inseriti mastrini
+		double totalemastrini = 0;
 
 		for (VociBilancioAttivo vociattivo : VociBilancioAttivo.values()) {
 			double sommamastrino = 0;
@@ -211,11 +244,17 @@ public class PdfCreator {
 					}
 				}
 			}
-			if (flag)
+			if (flag) {
 				titoliTabella2(vociattivo.toString(), String.valueOf(sommamastrino), tableattivo);
+				totalemastrini += sommamastrino;
+			}
 			flag = false;
 
 		}
+
+		RisultatiMastrini.setTotaleAttivo(totalemastrini);
+
+		totalemastrini = 0;
 
 		for (VociBilancioPassivo vocipassivo : VociBilancioPassivo.values()) {
 			double sommamastrino = 0;
@@ -231,15 +270,21 @@ public class PdfCreator {
 					}
 				}
 			}
-			if (flag)
+			if (flag) {
 				titoliTabella2(vocipassivo.toString(), String.valueOf(sommamastrino), tablepassivo);
+				totalemastrini += sommamastrino;
+			}
 			flag = false;
 
 		}
+		
+		RisultatiMastrini.setTotalePassivo(totalemastrini);
+
 		/**
 		 * ATTENZIONE DA
 		 * CONTROLLAREEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		 */
+		totalemastrini = 0;
 
 		for (VociBilancioContoEconomico vocicontoeconomico : VociBilancioContoEconomico.values()) {
 			double sommamastrino = 0;
@@ -255,8 +300,9 @@ public class PdfCreator {
 					}
 				}
 			}
-			if (flag)
+			if (flag) {
 				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconoico);
+			}
 			flag = false;
 
 		}
