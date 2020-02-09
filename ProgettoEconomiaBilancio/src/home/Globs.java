@@ -115,6 +115,7 @@ public class Globs {
 		 */
 		String sql2 = "CREATE TABLE IF NOT EXISTS Mastrini ( "
 				+ "    id    		INTEGER REFERENCES Bilanci (Reference), " 
+				+ "    idMastrino    INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ "    Anno         INTEGER, "
 				+ "    Voce         CHAR (100), "
 				+ "    Euro         DOUBLE, "

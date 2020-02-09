@@ -261,8 +261,8 @@ public class ProgettoEconomiaBilancio {
 		JButton btnRimuoviBilancio = new JButton("Rimuovi Bilancio");
 		panel.add(btnRimuoviBilancio, "cell 1 0");
 
-		JButton btnImportaBilancio = new JButton("Importa Bilancio");
-		panel.add(btnImportaBilancio, "flowx,cell 1 1");
+//		JButton btnImportaBilancio = new JButton("Importa Bilancio");
+//		panel.add(btnImportaBilancio, "flowx,cell 1 1");
 
 		JButton btnEsportaBilancio = new JButton("Esporta Bilancio");
 		btnEsportaBilancio.addActionListener(new ActionListener() {
@@ -416,6 +416,15 @@ public class ProgettoEconomiaBilancio {
 				aggiungiMastrinoAlDB();
 			}
 		});
+		
+		JButton btnRimuoviMastrino = new JButton("Rimuovi Mastrino");
+		btnRimuoviMastrino.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				rimuoviMastrino();
+			}
+		});
+		panel_5.add(btnRimuoviMastrino);
 		panel_5.add(btnInserisciMastrino);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -642,7 +651,7 @@ public class ProgettoEconomiaBilancio {
 				idBilancio = rs2.getInt("Reference");
 			}
 
-			String query = "SELECT Voce, Euro, InOut, Note FROM Mastrini WHERE id = " + idBilancio + ";";
+			String query = "SELECT idMastrino, Voce, Euro, InOut, Note FROM Mastrini WHERE id = " + idBilancio + ";";
 			ResultSet rs = stmt.executeQuery(query);
 
 			table.setModel(buildTableModel(rs));
@@ -747,6 +756,26 @@ public class ProgettoEconomiaBilancio {
 			JFrame frame = new JFrame("Show Message Box");
 			JOptionPane.showMessageDialog(frame, "Azienda selezionata!!!", "ERRORE", JOptionPane.ERROR_MESSAGE);
 			return null;
+		}
+	}
+
+	/**
+	 * @author Davide Funzione per eliminare il mastrino dal db
+	 */
+	private void rimuoviMastrino() {
+		if (table.getSelectedRowCount() > 0) {
+			String idMastrino = table.getValueAt(table.getSelectedRow(), 0).toString();
+			String qry = "DELETE FROM Mastrini WHERE idMastrino = " + idMastrino + ";";
+			try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
+				pstmt.executeUpdate();
+			} catch (SQLException p) {
+				System.out.println(p.getMessage());
+			}
+			aggiornaTabella();
+		} else {
+			JFrame frame = new JFrame("Show Message Box");
+			JOptionPane.showMessageDialog(frame, "Selezionare un mastrino prima di procedere conl'eliminazione.",
+					"ERRORE", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
