@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -115,7 +116,6 @@ public class PdfCreator {
 				document.add(tablepassivo);
 				titoliTabella3("TOTALE PASSIVO", String.valueOf(RisultatiMastrini.getTotalePassivo()), document);
 
-				
 				document.add(new AreaBreak());
 				titoliTabella1("CONTO ECONOMICO", document);
 				document.add(tablecontoeconomico);
@@ -129,6 +129,8 @@ public class PdfCreator {
 			} catch (FileNotFoundException e) {
 				// TODO: handle exception
 			}
+
+			resetAllRisultatoMastrini();
 		}
 	}
 
@@ -201,12 +203,34 @@ public class PdfCreator {
 	}
 
 	/**
+	 * Aggiunge alla tabella le celle contente i mastrini
+	 * 
+	 * @param cellcontent1
+	 * @param cellcontent2
+	 * @param table
+	 */
+
+	private static void titoliTabella4(String cellcontent1, String cellcontent2, Table table) {
+		Cell cell1 = new Cell();
+		cell1.add(new Paragraph(cellcontent1));
+		cell1.setBackgroundColor(new ColorConstants().CYAN);
+
+		table.addCell(cell1);
+
+		Cell cell2 = new Cell();
+		cell2.add(new Paragraph(cellcontent2));
+		cell2.setBackgroundColor(new ColorConstants().CYAN);
+
+		table.addCell(cell2);
+	}
+
+	/**
 	 * somma i mastrini sotto la stessa voce tenendo conto se sono in dare o avere
 	 */
 
 	private static void sommaMastriniConUgualeVoce(ArrayList<String> voce, ArrayList<String> attivo,
 			ArrayList<Double> euro, ArrayList<String> dareavere, Table tableattivo, Table tablepassivo,
-			Table tablecontoeconoico) {
+			Table tablecontoeconomico) {
 		int[] indicimastriniattivo = new int[voce.size()];
 		resetIndici(indicimastriniattivo);
 		int[] indicimastrinipassivo = new int[voce.size()];
@@ -254,14 +278,116 @@ public class PdfCreator {
 
 		RisultatiMastrini.setTotaleAttivo(totalemastrini);
 
+		/**
+		 * ATTENZIONE DA
+		 * CONTROLLAREEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 */
+		totalemastrini = 0;
+		int partecontoeconomicochange = 0; // variabile flag per vedere in che parte del conto economico ci troviamo
+		int partecontoeconomicochangepre = 0;
+		for (VociBilancioContoEconomico vocicontoeconomico : VociBilancioContoEconomico.values()) {
+			double sommamastrino = 0;
+			for (int i = 0; i < attivo.size(); i++) {
+				if (indicimastrinicontoeconomico[i] == 1) {
+					if (voce.get(i).compareTo(vocicontoeconomico.toString()) == 0) {
+						flag = true;
+						// se voce di bilancio è nei punti A
+						if (vocicontoeconomico.compareTo(VociBilancioContoEconomico.B) < 0) {
+							partecontoeconomicochange = 0;
+							if (dareavere.get(i).compareTo("Dare") == 0) {
+								sommamastrino -= euro.get(i);
+
+								RisultatiMastrini
+										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() + sommamastrino);
+							} else {
+								sommamastrino += euro.get(i);
+								RisultatiMastrini
+										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() + sommamastrino);
+							}
+						} else if (vocicontoeconomico.compareTo(VociBilancioContoEconomico.B) >= 0
+								&& vocicontoeconomico.compareTo(VociBilancioContoEconomico.C) < 0) {
+							partecontoeconomicochange = 1;
+							if (dareavere.get(i).compareTo("Dare") == 0) {
+								sommamastrino += euro.get(i);
+								RisultatiMastrini
+										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() + sommamastrino);
+
+							} else {
+								sommamastrino -= euro.get(i);
+								RisultatiMastrini
+										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() + sommamastrino);
+							}
+
+						} else if (vocicontoeconomico.compareTo(VociBilancioContoEconomico.C) >= 0
+								&& vocicontoeconomico.compareTo(VociBilancioContoEconomico.D) < 0) {
+							partecontoeconomicochange = 2;
+
+							if (dareavere.get(i).compareTo("Dare") == 0) {
+								sommamastrino -= euro.get(i);
+								RisultatiMastrini.setTotaliProventiEOneriFinanziari(
+										RisultatiMastrini.getTotalEProventiEOneriFinanziari() + sommamastrino);
+
+							} else {
+								sommamastrino += euro.get(i);
+
+								RisultatiMastrini.setTotaliProventiEOneriFinanziari(
+										RisultatiMastrini.getTotalEProventiEOneriFinanziari() + sommamastrino);
+							}
+
+						} else {
+							partecontoeconomicochange = 3;
+							if (dareavere.get(i).compareTo("Dare") == 0) {
+								sommamastrino -= euro.get(i);
+								RisultatiMastrini.setTotaliRettificheDiValoreEDiAttivitaFinanziarie(
+										RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()
+												+ sommamastrino);
+
+							} else {
+								sommamastrino += euro.get(i);
+
+								RisultatiMastrini.setTotaliRettificheDiValoreEDiAttivitaFinanziarie(
+										RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()
+												+ sommamastrino);
+
+							}
+						}
+					}
+				}
+			}
+
+			if (partecontoeconomicochange != partecontoeconomicochangepre) {
+				aggiungiSubTotaleAllaTabella(partecontoeconomicochange, tablecontoeconomico);
+			}
+			if (flag) {
+				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconomico);
+			}
+			
+
+			flag = false;
+			partecontoeconomicochangepre = partecontoeconomicochange;
+		}
+		// se non ci sono voci successivi al subtotale attuale
+
+		while (partecontoeconomicochange < 3) {
+			partecontoeconomicochange++;
+			aggiungiSubTotaleAllaTabella(partecontoeconomicochange, tablecontoeconomico);
+		}
+
 		totalemastrini = 0;
 
 		for (VociBilancioPassivo vocipassivo : VociBilancioPassivo.values()) {
 			double sommamastrino = 0;
+
+			if ("   IX-UTILI DELL'ESERCIZIO".compareTo(vocipassivo.toString()) == 0) {
+				titoliTabella2(vocipassivo.toString(), String.valueOf(RisultatiMastrini.getUtile()), tablepassivo);
+				totalemastrini += RisultatiMastrini.getUtile();
+				flag = false;
+			}
 			for (int i = 0; i < attivo.size(); i++) {
 				if (indicimastrinipassivo[i] == 1) {
 					if (voce.get(i).compareTo(vocipassivo.toString()) == 0) {
 						flag = true;
+
 						if (dareavere.get(i).compareTo("Dare") == 0) {
 							sommamastrino -= euro.get(i);
 						} else {
@@ -277,40 +403,50 @@ public class PdfCreator {
 			flag = false;
 
 		}
-		
+
 		RisultatiMastrini.setTotalePassivo(totalemastrini);
-
-		/**
-		 * ATTENZIONE DA
-		 * CONTROLLAREEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		 */
-		totalemastrini = 0;
-
-		for (VociBilancioContoEconomico vocicontoeconomico : VociBilancioContoEconomico.values()) {
-			double sommamastrino = 0;
-			for (int i = 0; i < attivo.size(); i++) {
-				if (indicimastrinicontoeconomico[i] == 1) {
-					if (voce.get(i).compareTo(vocicontoeconomico.toString()) == 0) {
-						flag = true;
-						if (dareavere.get(i).compareTo("Dare") == 0) {
-							sommamastrino -= euro.get(i);
-						} else {
-							sommamastrino += euro.get(i);
-						}
-					}
-				}
-			}
-			if (flag) {
-				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconoico);
-			}
-			flag = false;
-
-		}
 	}
 
 	private static void resetIndici(int[] indici) {
 		for (int i = 0; i < indici.length; i++) {
 			indici[i] = 0;
+		}
+	}
+
+	private static void resetAllRisultatoMastrini() {
+		RisultatiMastrini.setTotaleAttivo(0);
+		RisultatiMastrini.setTotalePassivo(0);
+		RisultatiMastrini.setValoreProduzione(0);
+		RisultatiMastrini.setCostiProduzione(0);
+		RisultatiMastrini.setTotaliProventiEOneriFinanziari(0);
+		RisultatiMastrini.setTotaliRettificheDiValoreEDiAttivitaFinanziarie(0);
+	}
+
+	private static void aggiungiSubTotaleAllaTabella(int partecontoeconomicochange, Table tablecontoeconomico) {
+		switch (partecontoeconomicochange) {
+		case 1:
+			titoliTabella4("VALORE PRODUZIONE", String.valueOf(RisultatiMastrini.getValoreProduzione()),
+					tablecontoeconomico);
+			break;
+		case 2:
+			titoliTabella4("COSTI PRODUZIONE", String.valueOf(RisultatiMastrini.getCostiProduzione()),
+					tablecontoeconomico);
+			titoliTabella4("EBIT", String.valueOf(RisultatiMastrini.getEBIT()), tablecontoeconomico);
+			break;
+		case 3:
+			titoliTabella4("TOTALE PROVENTI E ONERI FINANZIARI",
+					String.valueOf(RisultatiMastrini.getTotalEProventiEOneriFinanziari()), tablecontoeconomico);
+		case 4:
+			titoliTabella4("TOTALE RETTIFICHE DI VALORE DI ATTIVITA' FINANZIARIE",
+					String.valueOf(RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()),
+					tablecontoeconomico);
+			titoliTabella4("UTILE ANTE IMPOSTE", String.valueOf(RisultatiMastrini.getUtileAnteImposte()),
+					tablecontoeconomico);
+			titoliTabella4("TOTALE IMPOSTE", String.valueOf(RisultatiMastrini.getTotaleImposte()), tablecontoeconomico);
+			titoliTabella4("UTILE ESERCIZIO", String.valueOf(RisultatiMastrini.getUtile()), tablecontoeconomico);
+			break;
+		default:
+			;
 		}
 	}
 
