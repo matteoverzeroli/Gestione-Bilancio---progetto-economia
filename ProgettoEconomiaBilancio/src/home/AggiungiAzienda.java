@@ -1,8 +1,10 @@
 package home;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
@@ -18,12 +20,13 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.Box;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
 
 public class AggiungiAzienda extends JFrame {
 	// CAMPI
@@ -71,19 +74,8 @@ public class AggiungiAzienda extends JFrame {
 		lblNome.setForeground(Color.BLACK);
 
 		textNome = new JTextField();
+		textNome.setFocusTraversalKeysEnabled(false);
 		textNome.setColumns(10);
-
-		textDescrizione = new JTextArea();
-		textDescrizione.setWrapStyleWord(true);
-		textDescrizione.setLineWrap(true);
-		textDescrizione.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		textDescrizione.setToolTipText("dato necessario\r\n");
-		textDescrizione.setForeground(Color.BLACK);
-		textDescrizione.setColumns(10);
-		
-		
-		JLabel lblH = DefaultComponentFactory.getInstance().createLabel("Descrizione azienda:");
-		lblH.setForeground(Color.BLACK);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 
@@ -104,6 +96,12 @@ public class AggiungiAzienda extends JFrame {
 				aggiungiAziendaAlDB(); // aggiungo azienza inserita al db dopo aver controllato validità dei dati
 			}
 		});
+
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
+		
+				JLabel lblH = DefaultComponentFactory.getInstance().createLabel("Descrizione azienda:");
+				lblH.setForeground(Color.BLACK);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -114,12 +112,12 @@ public class AggiungiAzienda extends JFrame {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 129, GroupLayout.PREFERRED_SIZE)
 								.addComponent(textNome, 186, 186, 186)
-								.addComponent(lblH, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textDescrizione, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(lblH)))
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGap(192)
-							.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)))
-					.addGap(268)
+							.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
+						.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(403)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(horizontalStrut, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
@@ -154,15 +152,39 @@ public class AggiungiAzienda extends JFrame {
 							.addComponent(textNome, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(lblH)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textDescrizione, GroupLayout.PREFERRED_SIZE, 122, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(9)
 							.addComponent(btnOk, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
+
+		Box verticalBox = Box.createVerticalBox();
+		panel.add(verticalBox);
+
+		textDescrizione = new JTextArea();
+		verticalBox.add(textDescrizione);
+		textDescrizione.setSize(new Dimension(100, 50));
+		JScrollPane scroll = new JScrollPane(textDescrizione);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		verticalBox.setPreferredSize(new Dimension(240, 120));
+		verticalBox.add(scroll);
+		
+		textDescrizione.setWrapStyleWord(true);
+		textDescrizione.setLineWrap(true);
+		textDescrizione.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textDescrizione.setToolTipText("dato necessario\r\n");
+		textDescrizione.setForeground(Color.BLACK);
+		textDescrizione.setColumns(10);
 		contentPane.setLayout(gl_contentPane);
 		setVisible(true);
 		setLocationRelativeTo(null);
+		
+		
+		
+		
+		
 	}
 
 	/**

@@ -26,6 +26,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import com.jgoodies.forms.layout.Sizes;
 import net.miginfocom.swing.MigLayout;
@@ -48,6 +49,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 public class ProgettoEconomiaBilancio {
 
@@ -55,7 +59,7 @@ public class ProgettoEconomiaBilancio {
 	private JComboBox<String> comboAzienda;
 	private JComboBox<String> comboBoxBilancio;
 	private JTable table;
-	private JTextPane textNote;
+	private JTextArea textNote;
 	private JComboBox<String> comboBoxVociBilancio;
 	private JSpinner spinnerValore;
 	private JRadioButton rdbtnAttivo;
@@ -233,7 +237,7 @@ public class ProgettoEconomiaBilancio {
 
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.LIGHT_GRAY);
-		frame.getContentPane().add(panel, "1, 3, fill, fill");
+		frame.getContentPane().add(panel, "1, 3, fill, top");
 		panel.setLayout(new MigLayout("", "[][grow]", "[][]"));
 
 		JLabel lblBilancio = new JLabel("Bilancio:");
@@ -291,14 +295,15 @@ public class ProgettoEconomiaBilancio {
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.LIGHT_GRAY);
 		panel_1.add(panel_2, "cell 1 0,alignx center,growy");
-		panel_2.setLayout(new MigLayout("", "[grow]", "[100px:n:100px][grow][grow]"));
+		panel_2.setLayout(new MigLayout("", "[grow]", "[100px:n:100px][grow][grow][grow]"));
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(Color.LIGHT_GRAY);
-		panel_2.add(panel_3, "cell 0 0,grow");
+		panel_2.add(panel_3, "cell 0 0,growx,aligny top");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
 		Box verticalBox_2 = Box.createVerticalBox();
+		verticalBox_2.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_3.add(verticalBox_2);
 
 		rdbtnAttivo = new JRadioButton("Attivo");
@@ -343,13 +348,17 @@ public class ProgettoEconomiaBilancio {
 		gruppoAttivoPassivoContoEconomico.add(rdbtnAttivo);
 
 		Box verticalBox = Box.createVerticalBox();
+		verticalBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_3.add(verticalBox);
 
 		rdbtnDare = new JRadioButton("Dare");
+		rdbtnDare.setMaximumSize(new Dimension(61, 23));
+		rdbtnDare.setAlignmentX(Component.CENTER_ALIGNMENT);
 		rdbtnDare.setBackground(Color.LIGHT_GRAY);
 		verticalBox.add(rdbtnDare);
 
 		rdbtnAvere = new JRadioButton("Avere");
+		rdbtnAvere.setAlignmentX(Component.CENTER_ALIGNMENT);
 		rdbtnAvere.setBackground(Color.LIGHT_GRAY);
 		rdbtnAvere.setMinimumSize(new Dimension(61, 23));
 		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
@@ -366,48 +375,65 @@ public class ProgettoEconomiaBilancio {
 		panel_3.add(horizontalBox);
 
 		JLabel lblValore = new JLabel("Valore:");
+		lblValore.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblValore.setBackground(Color.LIGHT_GRAY);
 		horizontalBox.add(lblValore);
+
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalBox.add(horizontalStrut);
 
 		spinnerValore = new JSpinner();
 		spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
 		spinnerValore.setMinimumSize(new Dimension(120, 20));
-		spinnerValore.setMaximumSize(new Dimension(320, 20));
+		spinnerValore.setMaximumSize(new Dimension(120, 20));
 		horizontalBox.add(spinnerValore);
 
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-		panel_3.add(horizontalStrut);
+		JPanel panel_6 = new JPanel();
+		panel_2.add(panel_6, "cell 0 1,growx,aligny top");
 
-		Box horizontalBox_1 = Box.createHorizontalBox();
-		panel_3.add(horizontalBox_1);
+		Box verticalBox_3 = Box.createVerticalBox();
+		verticalBox_3.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel_6.add(verticalBox_3);
 
 		JLabel lblCodice = new JLabel("Voce bilancio:");
-		horizontalBox_1.add(lblCodice);
+		lblCodice.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblCodice.setOpaque(true);
+		lblCodice.setVerticalTextPosition(SwingConstants.TOP);
+		verticalBox_3.add(lblCodice);
 
 		comboBoxVociBilancio = new JComboBox<String>();
-		comboBoxVociBilancio.setMinimumSize(new Dimension(100, 22));
-		comboBoxVociBilancio.setMaximumSize(new Dimension(150, 22));
-		horizontalBox_1.add(comboBoxVociBilancio);
-
-		Component horizontalGlue_1 = Box.createHorizontalGlue();
-		horizontalBox_1.add(horizontalGlue_1);
+		verticalBox_3.add(comboBoxVociBilancio);
+		comboBoxVociBilancio.setPreferredSize(new Dimension(450, 22));
+		comboBoxVociBilancio.setMinimumSize(new Dimension(450, 22));
+		comboBoxVociBilancio.setMaximumSize(new Dimension(450, 22));
 
 		JPanel panel_4 = new JPanel();
 		panel_4.setBackground(Color.LIGHT_GRAY);
-		panel_2.add(panel_4, "cell 0 1,grow");
+		panel_2.add(panel_4, "cell 0 2,grow");
 
 		Box verticalBox_1 = Box.createVerticalBox();
+		verticalBox_1.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_4.add(verticalBox_1);
 
 		JLabel lblDescrizione = new JLabel("Descrizione:");
+		lblDescrizione.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox_1.add(lblDescrizione);
 
-		textNote = new JTextPane();
+		textNote = new JTextArea();
 		verticalBox_1.add(textNote);
-
+		textNote.setSize(new Dimension(400, 50));
+		
+		textNote.setWrapStyleWord(true);
+		textNote.setLineWrap(true);
+		JScrollPane scroll = new JScrollPane(textNote);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		verticalBox_1.setPreferredSize(new Dimension(400, 100));
+		verticalBox_1.add(scroll);
+	    
 		JPanel panel_5 = new JPanel();
 		panel_5.setBackground(Color.LIGHT_GRAY);
-		panel_2.add(panel_5, "cell 0 2,grow");
+		panel_2.add(panel_5, "cell 0 3,grow");
 
 		JButton btnInserisciMastrino = new JButton("Inserisci Mastrino");
 		btnInserisciMastrino.addMouseListener(new MouseAdapter() {
@@ -416,7 +442,7 @@ public class ProgettoEconomiaBilancio {
 				aggiungiMastrinoAlDB();
 			}
 		});
-		
+
 		JButton btnRimuoviMastrino = new JButton("Rimuovi Mastrino");
 		btnRimuoviMastrino.addMouseListener(new MouseAdapter() {
 			@Override
