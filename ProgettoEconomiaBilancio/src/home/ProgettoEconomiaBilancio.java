@@ -144,9 +144,9 @@ public class ProgettoEconomiaBilancio {
 		Globs.setHomeWindow(this); // setta nella classe Globs il riferimento a questa finestra
 
 		frame = new JFrame();
-		frame.setBackground(Color.LIGHT_GRAY);
-		frame.setMinimumSize(new Dimension(1000, 500));
-		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
+		frame.setBackground(Color.WHITE);
+		frame.setMinimumSize(new Dimension(1000, 650));
+		frame.getContentPane().setBackground(new Color(220, 220, 220));
 		frame.getContentPane()
 				.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("438px:grow"), },
 						new RowSpec[] { RowSpec.decode("24px"), FormSpecs.RELATED_GAP_ROWSPEC,
@@ -200,7 +200,7 @@ public class ProgettoEconomiaBilancio {
 		JButton btnAggiungiAzienda = new JButton("Aggiungi Azienda");
 		btnAggiungiAzienda.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnAggiungiAzienda.setForeground(Color.BLACK);
-		btnAggiungiAzienda.setBackground(Color.GRAY);
+		btnAggiungiAzienda.setBackground(Color.WHITE);
 		btnAggiungiAzienda.addMouseListener(new MouseAdapter() {
 			@Override
 			/**
@@ -220,7 +220,7 @@ public class ProgettoEconomiaBilancio {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnCancellaAzienda.setBackground(Color.GRAY);
+		btnCancellaAzienda.setBackground(Color.WHITE);
 
 		btnCancellaAzienda.addMouseListener(new MouseAdapter() {
 			@Override
@@ -236,7 +236,7 @@ public class ProgettoEconomiaBilancio {
 		toolBar.add(horizontalGlue);
 
 		JPanel panel = new JPanel();
-		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBackground(new Color(220, 220, 220));
 		frame.getContentPane().add(panel, "1, 3, fill, top");
 		panel.setLayout(new MigLayout("", "[][grow]", "[][]"));
 
@@ -282,7 +282,7 @@ public class ProgettoEconomiaBilancio {
 		panel.add(btnEsportaBilancio, "cell 1 1");
 
 		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(Color.LIGHT_GRAY);
+		panel_1.setBackground(new Color(220, 220, 220));
 		frame.getContentPane().add(panel_1, "1, 5, fill, fill");
 		panel_1.setLayout(new MigLayout("", "[210px][grow]", "[65px,grow]"));
 
@@ -293,21 +293,22 @@ public class ProgettoEconomiaBilancio {
 		panel_1.add(table, "cell 0 0,aligny baseline");
 
 		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(Color.LIGHT_GRAY);
+		panel_2.setBackground(new Color(220, 220, 220));
 		panel_1.add(panel_2, "cell 1 0,alignx center,growy");
 		panel_2.setLayout(new MigLayout("", "[grow]", "[100px:n:100px][grow][grow][grow]"));
 
 		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(Color.LIGHT_GRAY);
+		panel_3.setBackground(new Color(220, 220, 220));
 		panel_2.add(panel_3, "cell 0 0,growx,aligny top");
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
 		Box verticalBox_2 = Box.createVerticalBox();
+		verticalBox_2.setBackground(new Color(220, 220, 220));
 		verticalBox_2.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel_3.add(verticalBox_2);
 
 		rdbtnAttivo = new JRadioButton("Attivo");
-		rdbtnAttivo.setBackground(Color.LIGHT_GRAY);
+		rdbtnAttivo.setBackground(new Color(220, 220, 220));
 		verticalBox_2.add(rdbtnAttivo);
 		/*
 		 * Creazione gruppo di radiobuttons affinchè sia possibile selezionare un solo
@@ -317,12 +318,12 @@ public class ProgettoEconomiaBilancio {
 		ButtonGroup gruppoAttivoPassivoContoEconomico = new ButtonGroup();
 
 		rdbtnPassivo = new JRadioButton("Passivo");
-		rdbtnPassivo.setBackground(Color.LIGHT_GRAY);
+		rdbtnPassivo.setBackground(new Color(220, 220, 220));
 		verticalBox_2.add(rdbtnPassivo);
 		gruppoAttivoPassivoContoEconomico.add(rdbtnPassivo);
 
 		rdbtnContoEconomico = new JRadioButton("Conto Economico");
-		rdbtnContoEconomico.setBackground(Color.LIGHT_GRAY);
+		rdbtnContoEconomico.setBackground(new Color(220, 220, 220));
 		rdbtnContoEconomico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				comboBoxVociBilancio.removeAllItems();
@@ -354,12 +355,12 @@ public class ProgettoEconomiaBilancio {
 		rdbtnDare = new JRadioButton("Dare");
 		rdbtnDare.setMaximumSize(new Dimension(61, 23));
 		rdbtnDare.setAlignmentX(Component.CENTER_ALIGNMENT);
-		rdbtnDare.setBackground(Color.LIGHT_GRAY);
+		rdbtnDare.setBackground(new Color(220, 220, 220));
 		verticalBox.add(rdbtnDare);
 
 		rdbtnAvere = new JRadioButton("Avere");
 		rdbtnAvere.setAlignmentX(Component.CENTER_ALIGNMENT);
-		rdbtnAvere.setBackground(Color.LIGHT_GRAY);
+		rdbtnAvere.setBackground(new Color(220, 220, 220));
 		rdbtnAvere.setMinimumSize(new Dimension(61, 23));
 		rdbtnAvere.setMaximumSize(new Dimension(61, 23));
 		verticalBox.add(rdbtnAvere);
@@ -369,26 +370,51 @@ public class ProgettoEconomiaBilancio {
 		gruppoDareAvere.add(rdbtnAvere);
 
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1.setBackground(new Color(220, 220, 220));
 		panel_3.add(horizontalStrut_1);
-
-		Box horizontalBox = Box.createHorizontalBox();
-		panel_3.add(horizontalBox);
-
-		JLabel lblValore = new JLabel("Valore:");
-		lblValore.setAlignmentX(Component.CENTER_ALIGNMENT);
-		lblValore.setBackground(Color.LIGHT_GRAY);
-		horizontalBox.add(lblValore);
-
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-		horizontalBox.add(horizontalStrut);
-
-		spinnerValore = new JSpinner();
-		spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
-		spinnerValore.setMinimumSize(new Dimension(120, 20));
-		spinnerValore.setMaximumSize(new Dimension(120, 20));
-		horizontalBox.add(spinnerValore);
+		
+		Box verticalBox_4 = Box.createVerticalBox();
+		panel_3.add(verticalBox_4);
+						
+						Box horizontalBox_1 = Box.createHorizontalBox();
+						horizontalBox_1.setAlignmentY(Component.CENTER_ALIGNMENT);
+						verticalBox_4.add(horizontalBox_1);
+						
+						JLabel lblImposte = new JLabel("Imposte:");
+						lblImposte.setAlignmentX(Component.CENTER_ALIGNMENT);
+						horizontalBox_1.add(lblImposte);
+						
+						Component horizontalStrut_2 = Box.createHorizontalStrut(20);
+						horizontalStrut_2.setMaximumSize(new Dimension(10, 25));
+						horizontalBox_1.add(horizontalStrut_2);
+						
+						JSpinner spinner = new JSpinner();
+						spinner.setModel(new SpinnerNumberModel(0, 0, 100, 5));
+						spinner.setMaximumSize(new Dimension(120, 20));
+						horizontalBox_1.add(spinner);
+				
+						Box horizontalBox = Box.createHorizontalBox();
+						horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
+						verticalBox_4.add(horizontalBox);
+						horizontalBox.setBackground(new Color(220, 220, 220));
+						
+								JLabel lblValore = new JLabel("Valore:");
+								horizontalBox.add(lblValore);
+								lblValore.setAlignmentX(Component.CENTER_ALIGNMENT);
+								lblValore.setBackground(Color.LIGHT_GRAY);
+				
+						Component horizontalStrut = Box.createHorizontalStrut(20);
+						horizontalStrut.setMaximumSize(new Dimension(20, 25));
+						horizontalBox.add(horizontalStrut);
+						
+								spinnerValore = new JSpinner();
+								horizontalBox.add(spinnerValore);
+								spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
+								spinnerValore.setMinimumSize(new Dimension(120, 20));
+								spinnerValore.setMaximumSize(new Dimension(120, 20));
 
 		JPanel panel_6 = new JPanel();
+		panel_6.setBackground(new Color(220, 220, 220));
 		panel_2.add(panel_6, "cell 0 1,growx,aligny top");
 
 		Box verticalBox_3 = Box.createVerticalBox();
@@ -396,6 +422,7 @@ public class ProgettoEconomiaBilancio {
 		panel_6.add(verticalBox_3);
 
 		JLabel lblCodice = new JLabel("Voce bilancio:");
+		lblCodice.setBackground(new Color(220, 220, 220));
 		lblCodice.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblCodice.setOpaque(true);
 		lblCodice.setVerticalTextPosition(SwingConstants.TOP);
@@ -408,7 +435,7 @@ public class ProgettoEconomiaBilancio {
 		comboBoxVociBilancio.setMaximumSize(new Dimension(450, 22));
 
 		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(Color.LIGHT_GRAY);
+		panel_4.setBackground(new Color(220, 220, 220));
 		panel_2.add(panel_4, "cell 0 2,grow");
 
 		Box verticalBox_1 = Box.createVerticalBox();
@@ -422,7 +449,7 @@ public class ProgettoEconomiaBilancio {
 		textNote = new JTextArea();
 		verticalBox_1.add(textNote);
 		textNote.setSize(new Dimension(400, 50));
-		
+
 		textNote.setWrapStyleWord(true);
 		textNote.setLineWrap(true);
 		JScrollPane scroll = new JScrollPane(textNote);
@@ -430,9 +457,9 @@ public class ProgettoEconomiaBilancio {
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		verticalBox_1.setPreferredSize(new Dimension(400, 100));
 		verticalBox_1.add(scroll);
-	    
+
 		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(Color.LIGHT_GRAY);
+		panel_5.setBackground(new Color(220, 220, 220));
 		panel_2.add(panel_5, "cell 0 3,grow");
 
 		JButton btnInserisciMastrino = new JButton("Inserisci Mastrino");
@@ -789,15 +816,24 @@ public class ProgettoEconomiaBilancio {
 	 * @author Davide Funzione per eliminare il mastrino dal db
 	 */
 	private void rimuoviMastrino() {
+
 		if (table.getSelectedRowCount() > 0) {
-			String idMastrino = table.getValueAt(table.getSelectedRow(), 0).toString();
-			String qry = "DELETE FROM Mastrini WHERE idMastrino = " + idMastrino + ";";
-			try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
-				pstmt.executeUpdate();
-			} catch (SQLException p) {
-				System.out.println(p.getMessage());
+			int input = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler procedere?", "Attenzione...",
+					JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+			// 0=yes, 1=no, 2=cancel
+			if (input == 0) {
+				String idMastrino = table.getValueAt(table.getSelectedRow(), 0).toString();
+				String qry = "DELETE FROM Mastrini WHERE idMastrino = " + idMastrino + ";";
+				try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
+					pstmt.executeUpdate();
+				} catch (SQLException p) {
+					System.out.println(p.getMessage());
+				}
+				aggiornaTabella();
+			} else {
+				return;
 			}
-			aggiornaTabella();
+
 		} else {
 			JFrame frame = new JFrame("Show Message Box");
 			JOptionPane.showMessageDialog(frame, "Selezionare un mastrino prima di procedere conl'eliminazione.",
