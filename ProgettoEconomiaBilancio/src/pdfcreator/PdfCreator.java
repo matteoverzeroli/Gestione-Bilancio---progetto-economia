@@ -298,11 +298,11 @@ public class PdfCreator {
 								sommamastrino -= euro.get(i);
 
 								RisultatiMastrini
-										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() + sommamastrino);
+										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() - euro.get(i));
 							} else {
 								sommamastrino += euro.get(i);
 								RisultatiMastrini
-										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() + sommamastrino);
+										.setValoreProduzione(RisultatiMastrini.getValoreProduzione() + euro.get(i));
 							}
 						} else if (vocicontoeconomico.compareTo(VociBilancioContoEconomico.B) >= 0
 								&& vocicontoeconomico.compareTo(VociBilancioContoEconomico.C) < 0) {
@@ -310,12 +310,12 @@ public class PdfCreator {
 							if (dareavere.get(i).compareTo("Dare") == 0) {
 								sommamastrino += euro.get(i);
 								RisultatiMastrini
-										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() + sommamastrino);
+										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() + euro.get(i));
 
 							} else {
 								sommamastrino -= euro.get(i);
 								RisultatiMastrini
-										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() + sommamastrino);
+										.setCostiProduzione(RisultatiMastrini.getCostiProduzione() - euro.get(i));
 							}
 
 						} else if (vocicontoeconomico.compareTo(VociBilancioContoEconomico.C) >= 0
@@ -325,13 +325,13 @@ public class PdfCreator {
 							if (dareavere.get(i).compareTo("Dare") == 0) {
 								sommamastrino -= euro.get(i);
 								RisultatiMastrini.setTotaliProventiEOneriFinanziari(
-										RisultatiMastrini.getTotalEProventiEOneriFinanziari() + sommamastrino);
+										RisultatiMastrini.getTotalEProventiEOneriFinanziari() - euro.get(i));
 
 							} else {
 								sommamastrino += euro.get(i);
 
 								RisultatiMastrini.setTotaliProventiEOneriFinanziari(
-										RisultatiMastrini.getTotalEProventiEOneriFinanziari() + sommamastrino);
+										RisultatiMastrini.getTotalEProventiEOneriFinanziari() + euro.get(i));
 							}
 
 						} else {
@@ -340,14 +340,14 @@ public class PdfCreator {
 								sommamastrino -= euro.get(i);
 								RisultatiMastrini.setTotaliRettificheDiValoreEDiAttivitaFinanziarie(
 										RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()
-												+ sommamastrino);
+												- euro.get(i));
 
 							} else {
 								sommamastrino += euro.get(i);
 
 								RisultatiMastrini.setTotaliRettificheDiValoreEDiAttivitaFinanziarie(
 										RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()
-												+ sommamastrino);
+												+ euro.get(i));
 
 							}
 						}
@@ -358,17 +358,17 @@ public class PdfCreator {
 			if (partecontoeconomicochange != partecontoeconomicochangepre) {
 				aggiungiSubTotaleAllaTabella(partecontoeconomicochange, tablecontoeconomico);
 			}
+
 			if (flag) {
 				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconomico);
 			}
-			
 
 			flag = false;
 			partecontoeconomicochangepre = partecontoeconomicochange;
 		}
 		// se non ci sono voci successivi al subtotale attuale
 
-		while (partecontoeconomicochange < 3) {
+		while (partecontoeconomicochange < 4) {
 			partecontoeconomicochange++;
 			aggiungiSubTotaleAllaTabella(partecontoeconomicochange, tablecontoeconomico);
 		}
@@ -436,6 +436,7 @@ public class PdfCreator {
 		case 3:
 			titoliTabella4("TOTALE PROVENTI E ONERI FINANZIARI",
 					String.valueOf(RisultatiMastrini.getTotalEProventiEOneriFinanziari()), tablecontoeconomico);
+			break;
 		case 4:
 			titoliTabella4("TOTALE RETTIFICHE DI VALORE DI ATTIVITA' FINANZIARIE",
 					String.valueOf(RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()),
