@@ -40,7 +40,6 @@ public class PdfCreator {
 			try {
 
 				RisultatiMastrini.setPercentualeImposte(homewindow.getValueSpinnerImposte());
-				System.out.println(homewindow.getValueSpinnerImposte());
 
 				// Creating a PdfWriter
 				String destinazione = "generatedpdf\\" + homewindow.getAziendaSelected() + "_"

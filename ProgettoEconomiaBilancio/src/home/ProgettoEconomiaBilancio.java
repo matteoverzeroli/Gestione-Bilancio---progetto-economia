@@ -660,7 +660,7 @@ public class ProgettoEconomiaBilancio {
 			String qry = "INSERT INTO Mastrini (id, Anno, Voce, Euro, InOut, Attivo, Note) VALUES ("
 					+ String.valueOf(idBilancio) + ", '"
 					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + "', '"
-					+ comboBoxVociBilancio.getSelectedItem().toString() + "', " + spinnerValore.getValue() + ", '"
+					+ comboBoxVociBilancio.getSelectedItem().toString().replaceAll("'", "''") + "', " + spinnerValore.getValue() + ", '"
 					+ dare_avere + "', '" + attivo_passivo + "', '" + textNote.getText() + "' )";
 
 			PreparedStatement pstmt = conn.prepareStatement(qry);
