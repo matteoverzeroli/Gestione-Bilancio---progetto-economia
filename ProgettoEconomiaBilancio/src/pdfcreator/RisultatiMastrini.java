@@ -1,5 +1,7 @@
 package pdfcreator;
 
+import home.ProgettoEconomiaBilancio;
+
 /**
  * 
  * Classe che conterrà alcuni risultati dei mastrini inseriti

@@ -62,6 +62,7 @@ public class ProgettoEconomiaBilancio {
 	private JTextArea textNote;
 	private JComboBox<String> comboBoxVociBilancio;
 	private JSpinner spinnerValore;
+	private JSpinner spinnerImposte;
 	private JRadioButton rdbtnAttivo;
 	private JRadioButton rdbtnPassivo;
 	private JRadioButton rdbtnDare;
@@ -269,10 +270,6 @@ public class ProgettoEconomiaBilancio {
 //		panel.add(btnImportaBilancio, "flowx,cell 1 1");
 
 		JButton btnEsportaBilancio = new JButton("Esporta Bilancio");
-		btnEsportaBilancio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
 		btnEsportaBilancio.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -372,46 +369,46 @@ public class ProgettoEconomiaBilancio {
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		horizontalStrut_1.setBackground(new Color(220, 220, 220));
 		panel_3.add(horizontalStrut_1);
-		
+
 		Box verticalBox_4 = Box.createVerticalBox();
 		panel_3.add(verticalBox_4);
-						
-						Box horizontalBox_1 = Box.createHorizontalBox();
-						horizontalBox_1.setAlignmentY(Component.CENTER_ALIGNMENT);
-						verticalBox_4.add(horizontalBox_1);
-						
-						JLabel lblImposte = new JLabel("Imposte:");
-						lblImposte.setAlignmentX(Component.CENTER_ALIGNMENT);
-						horizontalBox_1.add(lblImposte);
-						
-						Component horizontalStrut_2 = Box.createHorizontalStrut(20);
-						horizontalStrut_2.setMaximumSize(new Dimension(10, 25));
-						horizontalBox_1.add(horizontalStrut_2);
-						
-						JSpinner spinner = new JSpinner();
-						spinner.setModel(new SpinnerNumberModel(0, 0, 100, 5));
-						spinner.setMaximumSize(new Dimension(120, 20));
-						horizontalBox_1.add(spinner);
-				
-						Box horizontalBox = Box.createHorizontalBox();
-						horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
-						verticalBox_4.add(horizontalBox);
-						horizontalBox.setBackground(new Color(220, 220, 220));
-						
-								JLabel lblValore = new JLabel("Valore:");
-								horizontalBox.add(lblValore);
-								lblValore.setAlignmentX(Component.CENTER_ALIGNMENT);
-								lblValore.setBackground(Color.LIGHT_GRAY);
-				
-						Component horizontalStrut = Box.createHorizontalStrut(20);
-						horizontalStrut.setMaximumSize(new Dimension(20, 25));
-						horizontalBox.add(horizontalStrut);
-						
-								spinnerValore = new JSpinner();
-								horizontalBox.add(spinnerValore);
-								spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
-								spinnerValore.setMinimumSize(new Dimension(120, 20));
-								spinnerValore.setMaximumSize(new Dimension(120, 20));
+
+		Box horizontalBox_1 = Box.createHorizontalBox();
+		horizontalBox_1.setAlignmentY(Component.CENTER_ALIGNMENT);
+		verticalBox_4.add(horizontalBox_1);
+
+		JLabel lblImposte = new JLabel("Imposte (%):");
+		lblImposte.setAlignmentX(Component.CENTER_ALIGNMENT);
+		horizontalBox_1.add(lblImposte);
+
+		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
+		horizontalStrut_2.setMaximumSize(new Dimension(10, 25));
+		horizontalBox_1.add(horizontalStrut_2);
+
+		spinnerImposte = new JSpinner();
+		spinnerImposte.setModel(new SpinnerNumberModel(40.0, 0.0, 100.0, 5.0));
+		spinnerImposte.setMaximumSize(new Dimension(120, 20));
+		horizontalBox_1.add(spinnerImposte);
+
+		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
+		verticalBox_4.add(horizontalBox);
+		horizontalBox.setBackground(new Color(220, 220, 220));
+
+		JLabel lblValore = new JLabel("Valore (\u20AC):");
+		horizontalBox.add(lblValore);
+		lblValore.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblValore.setBackground(Color.LIGHT_GRAY);
+
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalStrut.setMaximumSize(new Dimension(20, 25));
+		horizontalBox.add(horizontalStrut);
+
+		spinnerValore = new JSpinner();
+		horizontalBox.add(spinnerValore);
+		spinnerValore.setModel(new SpinnerNumberModel(new Double(0), new Double(0), null, new Double(1)));
+		spinnerValore.setMinimumSize(new Dimension(120, 20));
+		spinnerValore.setMaximumSize(new Dimension(120, 20));
 
 		JPanel panel_6 = new JPanel();
 		panel_6.setBackground(new Color(220, 220, 220));
@@ -839,6 +836,16 @@ public class ProgettoEconomiaBilancio {
 			JOptionPane.showMessageDialog(frame, "Selezionare un mastrino prima di procedere conl'eliminazione.",
 					"ERRORE", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	/**
+	 * @author Matteo
+	 * 
+	 * @return valore spinner percentuale imposte
+	 */
+
+	public double getValueSpinnerImposte() {
+		return (double) spinnerImposte.getValue();
 	}
 
 }

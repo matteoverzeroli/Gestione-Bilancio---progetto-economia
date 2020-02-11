@@ -38,6 +38,10 @@ public class PdfCreator {
 
 		if (homewindow.getAziendaSelected() != null && homewindow.getBilancioSelected() != -1) {
 			try {
+
+				RisultatiMastrini.setPercentualeImposte(homewindow.getValueSpinnerImposte());
+				System.out.println(homewindow.getValueSpinnerImposte());
+
 				// Creating a PdfWriter
 				String destinazione = "generatedpdf\\" + homewindow.getAziendaSelected() + "_"
 						+ homewindow.getBilancioSelected() + ".pdf";
@@ -61,6 +65,15 @@ public class PdfCreator {
 				// Adding paragraph
 				document.add(paragraph1);
 
+				if (getDescrizioneAzienda() != null) {
+					String para2 = "Descrizione azienda: " + getDescrizioneAzienda();
+
+					Paragraph paragraph2 = new Paragraph(para2);
+
+					// Adding paragraph
+					document.add(paragraph2);
+				}
+
 				titoliTabella1("ATTIVO", document);
 
 				float[] pointColumnWidths = { 400F, 123F }; // massimo somma 523f
@@ -72,6 +85,7 @@ public class PdfCreator {
 				ArrayList<String> attivo = new ArrayList<String>();
 				ArrayList<Double> euro = new ArrayList<Double>();
 				ArrayList<String> dareavere = new ArrayList<String>();
+				ArrayList<String> note = new ArrayList<String>();
 				// TODO le note?
 
 				try (Connection conn = Globs.connect()) {
@@ -99,13 +113,14 @@ public class PdfCreator {
 						attivo.add(rs.getString("Attivo"));
 						euro.add(rs.getDouble("Euro"));
 						dareavere.add(rs.getString("InOut"));
+						note.add(rs.getString("Note"));
 					}
 
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 
-				sommaMastriniConUgualeVoce(voce, attivo, euro, dareavere, tableattivo, tablepassivo,
+				sommaMastriniConUgualeVoce(voce, attivo, euro, dareavere, note, tableattivo, tablepassivo,
 						tablecontoeconomico);
 
 				document.add(tableattivo);
@@ -127,7 +142,10 @@ public class PdfCreator {
 						+ homewindow.getBilancioSelected() + ".pdf" + " salvato!!!", "Informazione",
 						JOptionPane.INFORMATION_MESSAGE);
 			} catch (FileNotFoundException e) {
-				// TODO: handle exception
+				JFrame frame = new JFrame("Show Message Box");
+				JOptionPane.showMessageDialog(frame,
+						"Non è stato possibile salvare il file pdf!\n Controllare che il file non sia utilizzato da altre applicazioni!",
+						"Errore!!!", JOptionPane.ERROR_MESSAGE);
 			}
 
 			resetAllRisultatoMastrini();
@@ -213,15 +231,45 @@ public class PdfCreator {
 	private static void titoliTabella4(String cellcontent1, String cellcontent2, Table table) {
 		Cell cell1 = new Cell();
 		cell1.add(new Paragraph(cellcontent1));
-		cell1.setBackgroundColor(new ColorConstants().CYAN);
+		cell1.setBackgroundColor(ColorConstants.GRAY);
 
 		table.addCell(cell1);
 
 		Cell cell2 = new Cell();
 		cell2.add(new Paragraph(cellcontent2));
-		cell2.setBackgroundColor(new ColorConstants().CYAN);
+		cell2.setBackgroundColor(ColorConstants.GRAY);
 
 		table.addCell(cell2);
+	}
+
+	/**
+	 * Aggiunge alla tabella le celle contente i mastrini
+	 * 
+	 * @param cellcontent1
+	 * @param cellcontent2
+	 * @param table
+	 */
+
+	private static void titoliTabella5(String cellcontent1, ArrayList<String> cellcontent2, Table table) {
+
+		Cell cell = new Cell();
+		cell.add(new Paragraph(cellcontent1));
+		cell.setBackgroundColor(ColorConstants.YELLOW);
+		cell.setTextAlignment(TextAlignment.CENTER);
+
+		table.addCell(cell);
+		table.addCell(new Cell().add(new Paragraph("")));
+
+		for (String stringa : cellcontent2) {
+			Cell cell1 = new Cell();
+			cell1.add(new Paragraph(stringa));
+			cell1.setBackgroundColor(ColorConstants.YELLOW);
+			cell1.setTextAlignment(TextAlignment.CENTER);
+
+			table.addCell(cell1);
+			table.addCell(new Cell().add(new Paragraph("")));
+		}
+
 	}
 
 	/**
@@ -229,8 +277,8 @@ public class PdfCreator {
 	 */
 
 	private static void sommaMastriniConUgualeVoce(ArrayList<String> voce, ArrayList<String> attivo,
-			ArrayList<Double> euro, ArrayList<String> dareavere, Table tableattivo, Table tablepassivo,
-			Table tablecontoeconomico) {
+			ArrayList<Double> euro, ArrayList<String> dareavere, ArrayList<String> note, Table tableattivo,
+			Table tablepassivo, Table tablecontoeconomico) {
 		int[] indicimastriniattivo = new int[voce.size()];
 		resetIndici(indicimastriniattivo);
 		int[] indicimastrinipassivo = new int[voce.size()];
@@ -253,9 +301,11 @@ public class PdfCreator {
 		boolean flag = false; // variabile flag per tenere in considerazione solo che voci del quali si sono
 								// inseriti mastrini
 		double totalemastrini = 0;
+		ArrayList<String> descrizione = new ArrayList<String>();
 
 		for (VociBilancioAttivo vociattivo : VociBilancioAttivo.values()) {
 			double sommamastrino = 0;
+			descrizione.clear();
 			for (int i = 0; i < attivo.size(); i++) {
 				if (indicimastriniattivo[i] == 1) {
 					if (voce.get(i).compareTo(vociattivo.toString()) == 0) {
@@ -265,11 +315,15 @@ public class PdfCreator {
 						} else {
 							sommamastrino -= euro.get(i);
 						}
+						if (note.get(i).compareTo("") != 0)
+							descrizione.add(note.get(i));
 					}
 				}
 			}
 			if (flag) {
 				titoliTabella2(vociattivo.toString(), String.valueOf(sommamastrino), tableattivo);
+				if (!descrizione.isEmpty())
+					titoliTabella5("Descrizione: ", descrizione, tableattivo);
 				totalemastrini += sommamastrino;
 			}
 			flag = false;
@@ -287,6 +341,7 @@ public class PdfCreator {
 		int partecontoeconomicochangepre = 0;
 		for (VociBilancioContoEconomico vocicontoeconomico : VociBilancioContoEconomico.values()) {
 			double sommamastrino = 0;
+			descrizione.clear();
 			for (int i = 0; i < attivo.size(); i++) {
 				if (indicimastrinicontoeconomico[i] == 1) {
 					if (voce.get(i).compareTo(vocicontoeconomico.toString()) == 0) {
@@ -351,6 +406,9 @@ public class PdfCreator {
 
 							}
 						}
+
+						if (note.get(i).compareTo("") != 0)
+							descrizione.add(note.get(i));
 					}
 				}
 			}
@@ -361,6 +419,8 @@ public class PdfCreator {
 
 			if (flag) {
 				titoliTabella2(vocicontoeconomico.toString(), String.valueOf(sommamastrino), tablecontoeconomico);
+				if (!descrizione.isEmpty())
+					titoliTabella5("Descrizione: ", descrizione, tablecontoeconomico);
 			}
 
 			flag = false;
@@ -377,6 +437,7 @@ public class PdfCreator {
 
 		for (VociBilancioPassivo vocipassivo : VociBilancioPassivo.values()) {
 			double sommamastrino = 0;
+			descrizione.clear();
 
 			if ("   IX-UTILI DELL'ESERCIZIO".compareTo(vocipassivo.toString()) == 0) {
 				titoliTabella2(vocipassivo.toString(), String.valueOf(RisultatiMastrini.getUtile()), tablepassivo);
@@ -393,12 +454,17 @@ public class PdfCreator {
 						} else {
 							sommamastrino += euro.get(i);
 						}
+
+						if (note.get(i).compareTo("") != 0)
+							descrizione.add(note.get(i));
 					}
 				}
 			}
 			if (flag) {
 				titoliTabella2(vocipassivo.toString(), String.valueOf(sommamastrino), tablepassivo);
 				totalemastrini += sommamastrino;
+				if (!descrizione.isEmpty())
+					titoliTabella5("Descrizione: ", descrizione, tablepassivo);
 			}
 			flag = false;
 
@@ -448,6 +514,23 @@ public class PdfCreator {
 			break;
 		default:
 			;
+		}
+	}
+
+	private static String getDescrizioneAzienda() {
+		try (Connection conn = Globs.connect()) {
+			Statement stmt = conn.createStatement();
+			String qry1 = "SELECT Descrizione FROM Aziende WHERE Nome = '" + homewindow.getAziendaSelected() + "';";
+			ResultSet rs = stmt.executeQuery(qry1);
+			if (rs.next()) {
+				return rs.getString("Descrizione");
+			} else {
+				return null;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
