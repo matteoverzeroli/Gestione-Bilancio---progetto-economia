@@ -660,8 +660,9 @@ public class ProgettoEconomiaBilancio {
 			String qry = "INSERT INTO Mastrini (id, Anno, Voce, Euro, InOut, Attivo, Note) VALUES ("
 					+ String.valueOf(idBilancio) + ", '"
 					+ Integer.valueOf(comboBoxBilancio.getSelectedItem().toString()) + "', '"
-					+ comboBoxVociBilancio.getSelectedItem().toString().replaceAll("'", "''") + "', " + spinnerValore.getValue() + ", '"
-					+ dare_avere + "', '" + attivo_passivo + "', '" + textNote.getText() + "' )";
+					+ comboBoxVociBilancio.getSelectedItem().toString().replaceAll("'", "''") + "', "
+					+ spinnerValore.getValue() + ", '" + dare_avere + "', '" + attivo_passivo + "', '"
+					+ textNote.getText() + "' )";
 
 			PreparedStatement pstmt = conn.prepareStatement(qry);
 			pstmt.executeUpdate();
@@ -703,8 +704,9 @@ public class ProgettoEconomiaBilancio {
 
 			String query = "SELECT idMastrino, Voce, Euro, InOut, Note FROM Mastrini WHERE id = " + idBilancio + ";";
 			ResultSet rs = stmt.executeQuery(query);
-
 			table.setModel(buildTableModel(rs));
+			table.removeColumn(table.getColumnModel().getColumn(0));
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
