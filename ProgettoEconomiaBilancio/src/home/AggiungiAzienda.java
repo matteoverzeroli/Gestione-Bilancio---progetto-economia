@@ -246,7 +246,7 @@ public class AggiungiAzienda extends JFrame {
 	 */
 	private void aggiungiAziendaAlDB() {
 		String name = textNome.getText();
-		String descrizione =  textDescrizione.getText();
+		String descrizione = textDescrizione.getText();
 		String qry = "INSERT INTO Aziende (Nome,Descrizione) VALUES ('" + name + "','" + descrizione + "');";
 		try (Connection conn = Globs.connect(); PreparedStatement pstmt = conn.prepareStatement(qry)) {
 			pstmt.executeUpdate();
