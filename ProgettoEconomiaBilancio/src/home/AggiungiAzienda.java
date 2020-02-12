@@ -173,7 +173,6 @@ public class AggiungiAzienda extends JFrame {
 		textDescrizione.setWrapStyleWord(true);
 		textDescrizione.setLineWrap(true);
 		textDescrizione.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		textDescrizione.setToolTipText("dato necessario\r\n");
 		textDescrizione.setForeground(Color.BLACK);
 		textDescrizione.setColumns(10);
 		contentPane.setLayout(gl_contentPane);
