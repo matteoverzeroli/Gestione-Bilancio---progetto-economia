@@ -1,4 +1,5 @@
 package home;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -31,10 +32,9 @@ public class Globs {
 	// CAMPI
 	private static ProgettoEconomiaBilancio homeWindow; // campo che contiene riferimento alla finestra
 	private static String databasename; // contiene il nome del file del database // ProgettoBilancioEconomia
-	
+
 	protected static final int lunghezzaMaxNomeAzienda = 30;
 	protected static final int lunghezzaMaxDescrizioneAzienda = 200;
-
 
 	/**
 	 * @author Matteo
@@ -93,35 +93,30 @@ public class Globs {
 		String url = "jdbc:sqlite:database/" + Globs.databasename;
 
 		String sql1 = "CREATE TABLE IF NOT EXISTS Aziende ( " + "    id		 	INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ "    Nome 	 	CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda)+") NOT NULL, " + "    Descrizione  CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda) +") " + ");";
+				+ "    Nome 	 	CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda) + ") NOT NULL, "
+				+ "    Descrizione  CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda) + ") " + ");";
 		/*
 		 * a ogni azienda può essere associato più di un bilancio: id - è l'intero con
 		 * cui un bilancio è associato all'azienda Reference - è un identificativo
 		 * univoco del bilancio in questione
 		 */
-		String sql3 = "CREATE TABLE IF NOT EXISTS Bilanci ( "
-				+ "	   id           INTEGER REFERENCES Aziende (id), "
-				+ "    Reference    INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ "    Anno         INTEGER, "
+		String sql3 = "CREATE TABLE IF NOT EXISTS Bilanci ( " + "	   id           INTEGER REFERENCES Aziende (id), "
+				+ "    Reference    INTEGER PRIMARY KEY AUTOINCREMENT, " + "    Anno         INTEGER, "
 				+ "    Note         CHAR (300) " + ");";
-		
+
 		/*
 		 * ATTENZIONE ALLA GESTIONE ENTRATE/USCITE -> ATTIVO / PASSIVO
 		 */
-		
+
 		/*
 		 * la variabile del database InOut indica se è un entrata o un uscita quindi + o
 		 * - nel conto id - è connesso a un bilancio tramite la variabile Reference
 		 */
 		String sql2 = "CREATE TABLE IF NOT EXISTS Mastrini ( "
-				+ "    id    		INTEGER REFERENCES Bilanci (Reference), " 
-				+ "    idMastrino    INTEGER PRIMARY KEY AUTOINCREMENT, "
-				+ "    Anno         INTEGER, "
-				+ "    Voce         CHAR (100), "
-				+ "    Euro         DOUBLE, "
-				+ "    InOut        CHAR (10), "
-				+ "    Attivo       CHAR (10), "
-				+ "    Note         CHAR (300) " + ");";
+				+ "    id    		INTEGER REFERENCES Bilanci (Reference), "
+				+ "    idMastrino    INTEGER PRIMARY KEY AUTOINCREMENT, " + "    Anno         INTEGER, "
+				+ "    Voce         CHAR (100), " + "    Euro         DOUBLE, " + "    InOut        CHAR (10), "
+				+ "    Attivo       CHAR (10), " + "    Note         CHAR (300) " + ");";
 
 		try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
 			if (conn != null) {

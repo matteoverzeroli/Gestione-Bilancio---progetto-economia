@@ -1,4 +1,5 @@
 package home;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -103,7 +104,7 @@ public class InserisciBilancio extends JFrame {
 
 		spinnerAnno = new JSpinner();
 
-		spinnerAnno.setModel(new SpinnerNumberModel(getCurrentYear(), null, getCurrentYear(), new Integer(1)));
+		spinnerAnno.setModel(new SpinnerNumberModel(getCurrentYear() - 1, null, getCurrentYear() - 1, new Integer(1)));
 		spinnerAnno.setBounds(68, 8, 133, 20);
 
 		/*

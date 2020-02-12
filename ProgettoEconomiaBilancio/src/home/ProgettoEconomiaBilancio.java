@@ -292,10 +292,11 @@ public class ProgettoEconomiaBilancio {
 		panel_1.setBackground(new Color(220, 220, 220));
 		frame.getContentPane().add(panel_1, "1, 5, fill, fill");
 		panel_1.setLayout(new MigLayout("", "[210px,grow][550px]", "[65px,grow]"));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
+
 		panel_1.add(scrollPane, "cell 0 0,grow");
-		
+
 		table = new JTable();
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		scrollPane.setViewportView(table);
@@ -437,6 +438,7 @@ public class ProgettoEconomiaBilancio {
 		verticalBox_3.add(lblCodice);
 
 		comboBoxVociBilancio = new JComboBox<String>();
+		comboBoxVociBilancio.setToolTipText("");
 		verticalBox_3.add(comboBoxVociBilancio);
 		comboBoxVociBilancio.setPreferredSize(new Dimension(450, 22));
 		comboBoxVociBilancio.setMinimumSize(new Dimension(450, 22));
@@ -608,21 +610,19 @@ public class ProgettoEconomiaBilancio {
 
 		aggiornaComboAzienda();
 	}
-	
-	private void rimuoviBilancioDalDB()
-	{
+
+	private void rimuoviBilancioDalDB() {
 		Object[] possibilities = { "Bilancio non selezionato!" };
 
 		int idAzienda = 0;
-		try (Connection conn = Globs.connect();
-				Statement stmt = conn.createStatement();) {
+		try (Connection conn = Globs.connect(); Statement stmt = conn.createStatement();) {
 			String qry1 = "SELECT id FROM Aziende WHERE Nome = '" + comboAzienda.getSelectedItem().toString() + "';";
 			ResultSet rs1 = stmt.executeQuery(qry1);
 			if (rs1.next())
 				idAzienda = rs1.getInt("id");
 			String sql = "SELECT Reference, Anno FROM Bilanci WHERE id = " + idAzienda + ";";
 			ResultSet rs = stmt.executeQuery(sql);
-			
+
 			int i = 0;
 			while (rs.next()) {
 				/*
@@ -642,14 +642,16 @@ public class ProgettoEconomiaBilancio {
 		}
 
 		String aziendaselezionata = (String) JOptionPane.showInputDialog(frame,
-				"Seleziona l'anno del bilancio dell'azienda '" + comboAzienda.getSelectedItem().toString() + "' che vuoi cancellare", "Cancellazione Bilancio",
-				JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
+				"Seleziona l'anno del bilancio dell'azienda '" + comboAzienda.getSelectedItem().toString()
+						+ "' che vuoi cancellare",
+				"Cancellazione Bilancio", JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
 		while (aziendaselezionata != null && aziendaselezionata.compareTo("Bilancio non selezionato!") == 0) {
 			JFrame frame = new JFrame("Show Message Box");
 			JOptionPane.showMessageDialog(frame, "Selezionare un bilancio!", "ERRORE", JOptionPane.ERROR_MESSAGE);
 			aziendaselezionata = (String) JOptionPane.showInputDialog(frame,
-					"Seleziona l'anno del bilancio dell'azienda '" + comboAzienda.getSelectedItem().toString() + "' che vuoi cancellare", "Cancellazione Bilancio",
-					JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
+					"Seleziona l'anno del bilancio dell'azienda '" + comboAzienda.getSelectedItem().toString()
+							+ "' che vuoi cancellare",
+					"Cancellazione Bilancio", JOptionPane.PLAIN_MESSAGE, null, possibilities, "ham");
 		}
 
 		String qry = "DELETE FROM Bilanci WHERE id = " + idAzienda + " AND  Anno = " + aziendaselezionata + ";";
@@ -737,25 +739,27 @@ public class ProgettoEconomiaBilancio {
 	}
 
 	/**
-	 * @author Davide Funzione che permette di fare il resize delle colonne della tabella
+	 * @author Davide Funzione che permette di fare il resize delle colonne della
+	 *         tabella
 	 * @param table
 	 */
 	public void resizeColumnWidth(JTable table) {
-	    final TableColumnModel columnModel = table.getColumnModel();
-	    for (int column = 0; column < table.getColumnCount(); column++) {
-	        int width = 15; // Min width
-	        for (int row = 0; row < table.getRowCount(); row++) {
-	            TableCellRenderer renderer = table.getCellRenderer(row, column);
-	            Component comp = table.prepareRenderer(renderer, row, column);
-	            width = Math.max(comp.getPreferredSize().width +1 , width);
-	        }
-	        if(width > 500)
-	            width=500;
-	        if(width > 100 && column == 4)
-	        	width = 100;
-	        columnModel.getColumn(column).setPreferredWidth(width);
-	    }
+		final TableColumnModel columnModel = table.getColumnModel();
+		for (int column = 0; column < table.getColumnCount(); column++) {
+			int width = 15; // Min width
+			for (int row = 0; row < table.getRowCount(); row++) {
+				TableCellRenderer renderer = table.getCellRenderer(row, column);
+				Component comp = table.prepareRenderer(renderer, row, column);
+				width = Math.max(comp.getPreferredSize().width + 1, width);
+			}
+			if (width > 500)
+				width = 500;
+			if (width > 100 && column == 4)
+				width = 100;
+			columnModel.getColumn(column).setPreferredWidth(width);
+		}
 	}
+
 	/**
 	 * @author Davide qui bisognerà andare a cercare tutti i mastrini dell'azienda
 	 *         selezionata e dell'anno selezionato ed andare a inserirli nella
@@ -792,7 +796,7 @@ public class ProgettoEconomiaBilancio {
 			resizeColumnWidth(table);
 			table.getColumnModel().getColumn(0).setMinWidth(0);
 			table.getColumnModel().getColumn(0).setMaxWidth(0);
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

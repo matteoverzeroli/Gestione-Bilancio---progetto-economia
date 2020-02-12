@@ -121,25 +121,46 @@ public class PdfCreator {
 
 				sommaMastriniConUgualeVoce(voce, attivo, euro, dareavere, note, tableattivo, tablepassivo,
 						tablecontoeconomico);
+				if (RisultatiMastrini.getTotaleAttivo() != RisultatiMastrini.getTotalePassivo()) {
+					JFrame frame1 = new JFrame("Show Message Box");
+					Object[] options = { "Si", "No" };
+					int n = JOptionPane.showOptionDialog(frame1,
+							"Totale Attivo: " + String.valueOf((float) RisultatiMastrini.getTotaleAttivo())
+									+ "\nTotale Passivo: "
+									+ String.valueOf((float) RisultatiMastrini.getTotalePassivo())
+									+ "\n Non bilanciato!!!\n Vuoi salvarlo comunque?",
+							"Attenzione", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+							options[1]);
+					if (n != 0) {
+						document.close();
+					} else {
+						// non fare nulla
 
-				document.add(tableattivo);
-				titoliTabella3("TOTALE ATTIVO", String.valueOf(RisultatiMastrini.getTotaleAttivo()), document);
+						document.add(tableattivo);
+						titoliTabella3("TOTALE ATTIVO", String.valueOf((float) RisultatiMastrini.getTotaleAttivo()),
+								document);
 
-				document.add(new AreaBreak());
-				titoliTabella1("PASSIVO", document);
-				document.add(tablepassivo);
-				titoliTabella3("TOTALE PASSIVO", String.valueOf(RisultatiMastrini.getTotalePassivo()), document);
+						document.add(new AreaBreak());
+						titoliTabella1("PASSIVO", document);
+						document.add(tablepassivo);
+						titoliTabella3("TOTALE PASSIVO", String.valueOf((float) RisultatiMastrini.getTotalePassivo()),
+								document);
 
-				document.add(new AreaBreak());
-				titoliTabella1("CONTO ECONOMICO", document);
-				document.add(tablecontoeconomico);
+						document.add(new AreaBreak());
+						titoliTabella1("CONTO ECONOMICO", document);
+						document.add(tablecontoeconomico);
 
-				// Closing the document
-				document.close();
-				JFrame frame = new JFrame("Show Message Box");
-				JOptionPane.showMessageDialog(frame, homewindow.getAziendaSelected() + "_"
-						+ homewindow.getBilancioSelected() + ".pdf" + " salvato!!!", "Informazione",
-						JOptionPane.INFORMATION_MESSAGE);
+						// Closing the document
+						document.close();
+						JFrame frame = new JFrame("Show Message Box");
+						JOptionPane
+								.showMessageDialog(frame,
+										homewindow.getAziendaSelected() + "_" + homewindow.getBilancioSelected()
+												+ ".pdf" + " salvato!!!",
+										"Informazione", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+
 			} catch (FileNotFoundException e) {
 				JFrame frame = new JFrame("Show Message Box");
 				JOptionPane.showMessageDialog(frame,
@@ -439,7 +460,8 @@ public class PdfCreator {
 			descrizione.clear();
 
 			if ("   IX-UTILI DELL'ESERCIZIO".compareTo(vocipassivo.toString()) == 0) {
-				titoliTabella2(vocipassivo.toString(), String.valueOf(RisultatiMastrini.getUtile()), tablepassivo);
+				titoliTabella2(vocipassivo.toString(), String.valueOf((float) RisultatiMastrini.getUtile()),
+						tablepassivo);
 				totalemastrini += RisultatiMastrini.getUtile();
 				flag = false;
 			}
@@ -490,26 +512,28 @@ public class PdfCreator {
 	private static void aggiungiSubTotaleAllaTabella(int partecontoeconomicochange, Table tablecontoeconomico) {
 		switch (partecontoeconomicochange) {
 		case 1:
-			titoliTabella4("VALORE PRODUZIONE", String.valueOf(RisultatiMastrini.getValoreProduzione()),
+			titoliTabella4("VALORE PRODUZIONE", String.valueOf((float) RisultatiMastrini.getValoreProduzione()),
 					tablecontoeconomico);
 			break;
 		case 2:
-			titoliTabella4("COSTI PRODUZIONE", String.valueOf(RisultatiMastrini.getCostiProduzione()),
+			titoliTabella4("COSTI PRODUZIONE", String.valueOf((float) RisultatiMastrini.getCostiProduzione()),
 					tablecontoeconomico);
-			titoliTabella4("EBIT", String.valueOf(RisultatiMastrini.getEBIT()), tablecontoeconomico);
+			titoliTabella4("EBIT", String.valueOf((float) RisultatiMastrini.getEBIT()), tablecontoeconomico);
 			break;
 		case 3:
 			titoliTabella4("TOTALE PROVENTI E ONERI FINANZIARI",
-					String.valueOf(RisultatiMastrini.getTotalEProventiEOneriFinanziari()), tablecontoeconomico);
+					String.valueOf((float) RisultatiMastrini.getTotalEProventiEOneriFinanziari()), tablecontoeconomico);
 			break;
 		case 4:
 			titoliTabella4("TOTALE RETTIFICHE DI VALORE DI ATTIVITA' FINANZIARIE",
-					String.valueOf(RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()),
+					String.valueOf((float) RisultatiMastrini.getTotaliRettificheDiValoreEDiAttivitaFinanziarie()),
 					tablecontoeconomico);
-			titoliTabella4("UTILE ANTE IMPOSTE", String.valueOf(RisultatiMastrini.getUtileAnteImposte()),
+			titoliTabella4("UTILE ANTE IMPOSTE", String.valueOf((float) RisultatiMastrini.getUtileAnteImposte()),
 					tablecontoeconomico);
-			titoliTabella4("TOTALE IMPOSTE", String.valueOf(RisultatiMastrini.getTotaleImposte()), tablecontoeconomico);
-			titoliTabella4("UTILE ESERCIZIO", String.valueOf(RisultatiMastrini.getUtile()), tablecontoeconomico);
+			titoliTabella4("TOTALE IMPOSTE", String.valueOf((float) RisultatiMastrini.getTotaleImposte()),
+					tablecontoeconomico);
+			titoliTabella4("UTILE ESERCIZIO", String.valueOf((float) RisultatiMastrini.getUtile()),
+					tablecontoeconomico);
 			break;
 		default:
 			;
