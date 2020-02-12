@@ -66,7 +66,7 @@ public class Globs {
 	 */
 	public static Connection connect() {
 		// SQLite connection string
-		String url = "jdbc:sqlite:database/" + databasename;
+		String url = "jdbc:sqlite:" + databasename;
 		Connection conn = null;
 		try {
 			conn = DriverManager.getConnection(url);
@@ -90,7 +90,7 @@ public class Globs {
 			// TODO: handle exception
 		}
 
-		String url = "jdbc:sqlite:database/" + Globs.databasename;
+		String url = "jdbc:sqlite:" + Globs.databasename;
 
 		String sql1 = "CREATE TABLE IF NOT EXISTS Aziende ( " + "    id		 	INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ "    Nome 	 	CHAR (" + String.valueOf(lunghezzaMaxNomeAzienda) + ") NOT NULL, "

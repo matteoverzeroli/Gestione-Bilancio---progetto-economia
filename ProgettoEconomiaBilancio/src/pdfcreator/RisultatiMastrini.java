@@ -66,7 +66,7 @@ public class RisultatiMastrini {
 	}
 	
 	static double getEBIT() {
-		return VALOREPRODUZIONE+COSTIPRODUZIONE;
+		return VALOREPRODUZIONE-COSTIPRODUZIONE;
 	}
 	
 	static double getTotalEProventiEOneriFinanziari() {

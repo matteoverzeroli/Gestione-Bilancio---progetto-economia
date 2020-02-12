@@ -1,5 +1,6 @@
 package pdfcreator;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -42,8 +43,7 @@ public class PdfCreator {
 				RisultatiMastrini.setPercentualeImposte(homewindow.getValueSpinnerImposte());
 
 				// Creating a PdfWriter
-				String destinazione = "generatedpdf\\" + homewindow.getAziendaSelected() + "_"
-						+ homewindow.getBilancioSelected() + ".pdf";
+				String destinazione = homewindow.getAziendaSelected() + "_" + homewindow.getBilancioSelected() + ".pdf";
 				PdfWriter writer = new PdfWriter(destinazione);
 
 				// Creating a PdfDocument
@@ -133,33 +133,36 @@ public class PdfCreator {
 							options[1]);
 					if (n != 0) {
 						document.close();
-					} else {
-						// non fare nulla
+						File file = new File(destinazione);
+						try {
+							file.delete();
 
-						document.add(tableattivo);
-						titoliTabella3("TOTALE ATTIVO", String.valueOf((float) RisultatiMastrini.getTotaleAttivo()),
-								document);
-
-						document.add(new AreaBreak());
-						titoliTabella1("PASSIVO", document);
-						document.add(tablepassivo);
-						titoliTabella3("TOTALE PASSIVO", String.valueOf((float) RisultatiMastrini.getTotalePassivo()),
-								document);
-
-						document.add(new AreaBreak());
-						titoliTabella1("CONTO ECONOMICO", document);
-						document.add(tablecontoeconomico);
-
-						// Closing the document
-						document.close();
-						JFrame frame = new JFrame("Show Message Box");
-						JOptionPane
-								.showMessageDialog(frame,
-										homewindow.getAziendaSelected() + "_" + homewindow.getBilancioSelected()
-												+ ".pdf" + " salvato!!!",
-										"Informazione", JOptionPane.INFORMATION_MESSAGE);
+						} catch (Exception e) {
+						}
+						
+						resetAllRisultatoMastrini();
+						return;
 					}
 				}
+				document.add(tableattivo);
+				titoliTabella3("TOTALE ATTIVO", String.valueOf((float) RisultatiMastrini.getTotaleAttivo()), document);
+
+				document.add(new AreaBreak());
+				titoliTabella1("PASSIVO", document);
+				document.add(tablepassivo);
+				titoliTabella3("TOTALE PASSIVO", String.valueOf((float) RisultatiMastrini.getTotalePassivo()),
+						document);
+
+				document.add(new AreaBreak());
+				titoliTabella1("CONTO ECONOMICO", document);
+				document.add(tablecontoeconomico);
+
+				// Closing the document
+				document.close();
+				JFrame frame = new JFrame("Show Message Box");
+				JOptionPane.showMessageDialog(frame, homewindow.getAziendaSelected() + "_"
+						+ homewindow.getBilancioSelected() + ".pdf" + " salvato!!!", "Informazione",
+						JOptionPane.INFORMATION_MESSAGE);
 
 			} catch (FileNotFoundException e) {
 				JFrame frame = new JFrame("Show Message Box");
@@ -170,6 +173,7 @@ public class PdfCreator {
 
 			resetAllRisultatoMastrini();
 		}
+
 	}
 
 	/**
