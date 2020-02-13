@@ -5,7 +5,11 @@ Progetto Economia-Bilancio
 
 -sistemare combo box voci di bilancio... non per tutte le voci è sufficentemente ampia!
 
--fare esercizi per vedere se tutto è corretto!
+-fare esercizi per vedere se tutto è corretto ALMENO 2!
+
+-CONTROLLARE GUIDA E LE **TUTTE** LE VOCI DI BILANCIO ATTIVO PASSIVO E CE PER ERRORI ORTOGRAFICI E CHE NON CI SIANO DUE VOCI O SOTTOVOCI CON LO STESSO NOME
+
+- SCEGLIERE NOME E ICONA 
 
 -Release v1.0
 
