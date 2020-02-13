@@ -7,6 +7,4 @@ Progetto Economia-Bilancio
 
 -fare esercizi per vedere se tutto è corretto!
 
--ststemare la voce utile esercizio dedotta dal CE
-
 -Release v1.0
