@@ -92,7 +92,7 @@ public class ProgettoEconomiaBilancio {
 	 * Create the application.
 	 */
 	public ProgettoEconomiaBilancio() {
-		Globs.createNewDatabase("Test.db");
+		Globs.createNewDatabase("Database.db");
 		initialize();
 	}
 
