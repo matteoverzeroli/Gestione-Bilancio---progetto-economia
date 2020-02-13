@@ -139,7 +139,7 @@ public class PdfCreator {
 
 						} catch (Exception e) {
 						}
-						
+
 						resetAllRisultatoMastrini();
 						return;
 					}
@@ -464,10 +464,8 @@ public class PdfCreator {
 			descrizione.clear();
 
 			if ("   IX-UTILI DELL'ESERCIZIO".compareTo(vocipassivo.toString()) == 0) {
-				titoliTabella2(vocipassivo.toString(), String.valueOf((float) RisultatiMastrini.getUtile()),
-						tablepassivo);
-				totalemastrini += RisultatiMastrini.getUtile();
-				flag = false;
+				sommamastrino += RisultatiMastrini.getUtile();
+				flag = true;
 			}
 			for (int i = 0; i < attivo.size(); i++) {
 				if (indicimastrinipassivo[i] == 1) {
