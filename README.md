@@ -32,4 +32,3 @@ Il file pdf viene salvato nella cartella nella quale è presente il file.jar del
 E' anche possibile eliminare dal database le aziende e i bilanci relativi ad esse cliccando sul pulsate “Cancella Azienda” e “Cancella Bilancio” e selezionando dal menù a tendina quale azienda/bilancio si vuole eliminare.
  
 Si possono anche eliminare i mastrini, selezionandone uno direttamente dalla tabella e cliccando il pulsante “Rimuovi Mastrino”.
-
